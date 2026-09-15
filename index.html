@@ -405,6 +405,7 @@ document.getElementById('nicknameSaveBtn').onclick=async()=>{
   await db.collection('busan_members').doc(currentUser.uid).set({nickname:nick, email:currentUser.email, joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
   myNickname=nick;
   document.getElementById('nicknameOverlay').classList.add('hidden');
+  document.getElementById('appRoot').classList.remove('hidden');
   boot();
 };
 
