@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>부산플래너 · 해운대 1박2일</title>
+<style>
+  :root{
+    --navy:#0B2A3B; --navy2:#123B52; --teal:#14707A; --sand:#F5EEDC;
+    --foam:#FFFFFF; --coral:#FF6B4A; --coral-deep:#E4573A; --ink:#16242B;
+    --muted:#5C6E74; --line:#E3DCC8; --done:#2E8B57; --red:#C0392B;
+    font-size:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:var(--sand); color:var(--ink);
+    font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',-apple-system,BlinkMacSystemFont,sans-serif;}
+  body{padding-bottom:78px;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  input{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ---------- AUTH ---------- */
+  #authOverlay{
+    position:fixed; inset:0; z-index:100; background:linear-gradient(160deg, var(--navy), var(--navy2) 60%, var(--teal));
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .auth-card{background:var(--foam); border-radius:20px; padding:26px 22px; width:100%; max-width:360px;}
+  .auth-card h1{font-size:20px; margin:0 0 4px;}
+  .auth-card p.sub{font-size:13px; color:var(--muted); margin:0 0 18px;}
+  .auth-card input{
+    width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+    font-size:14px; margin-bottom:10px;
+  }
+  .auth-row{display:flex; gap:8px; margin-top:6px;}
+  .auth-row button{flex:1; padding:12px; border-radius:10px; border:none; font-weight:700; font-size:14px;}
+  .btn-primary{background:var(--coral); color:#fff;}
+  .btn-ghost{background:var(--sand); color:var(--ink);}
+  #authMsg{font-size:12.5px; min-height:18px; margin-top:10px; color:var(--red);}
+  .auth-link{font-size:12px; color:var(--teal); text-align:center; display:block; margin-top:12px; text-decoration:none;}
+
+  #nicknameOverlay{
+    position:fixed; inset:0; z-index:99; background:rgba(11,42,59,.55);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .nick-card{background:var(--foam); border-radius:18px; padding:22px; width:100%; max-width:340px;}
+  .nick-card h3{margin:0 0 6px; font-size:16px;}
+  .nick-card p{font-size:12.5px; color:var(--muted); margin:0 0 14px;}
+  .nick-card input{width:100%; border:1px solid var(--line); border-radius:10px; padding:12px; font-size:14px; margin-bottom:12px;}
+  .nick-card button{width:100%; padding:12px; border:none; border-radius:10px; background:var(--coral); color:#fff; font-weight:700;}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative; background:linear-gradient(160deg, var(--navy) 0%, var(--navy2) 55%, var(--teal) 100%);
+    color:#EAF4F4; padding:20px 20px 44px;}
+  .hero-top{display:flex; justify-content:space-between; align-items:flex-start;}
+  .hero .eyebrow{font-size:13px; color:#9FD0CE; margin-bottom:6px;}
+  .hero h1{font-size:25px; line-height:1.25; margin:0 0 4px; font-weight:800;}
+  .hero h1 em{font-style:normal; color:var(--coral);}
+  .hero p.sub{margin:0; font-size:13.5px; color:#C9DEDD;}
+  #logoutBtn{background:none; border:1px solid rgba(255,255,255,.35); color:#EAF4F4; border-radius:999px; padding:6px 12px; font-size:11.5px;}
+  .hero .stats{display:flex; gap:16px; margin-top:18px; flex-wrap:wrap;}
+  .hero .stat b{display:block; font-size:19px; font-weight:800;}
+  .hero .stat span{font-size:11.5px; color:#AFCFCE;}
+  .wave{position:absolute; left:0; right:0; bottom:-1px; line-height:0;}
+  .wave svg{width:100%; height:34px; display:block;}
+  .member-row{display:flex; gap:6px; margin-top:14px; flex-wrap:wrap;}
+  .member-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:4px 10px; font-size:11.5px;}
+
+  /* ---------- TABS ---------- */
+  nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--foam); border-top:1px solid var(--line);
+    display:flex; overflow-x:auto; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -2px 10px rgba(11,42,59,.06);}
+  nav.tabs button{flex:1 0 auto; min-width:54px; background:none; border:none; display:flex; flex-direction:column; align-items:center;
+    gap:2px; padding:6px 4px; color:var(--muted); font-size:10.5px; border-radius:10px;}
+  nav.tabs button .ic{font-size:18px;}
+  nav.tabs button.active{color:var(--coral-deep); font-weight:700;}
+
+  main{max-width:520px; margin:0 auto; padding:18px 16px 30px;}
+  section.view{display:none;}
+  section.view.active{display:block; animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+
+  h2.sec-title{font-size:17px; font-weight:800; margin:22px 0 10px; display:flex; align-items:center; gap:8px;}
+  h2.sec-title:first-child{margin-top:0;}
+  h2.sec-title .bar{width:4px; height:16px; background:var(--coral); border-radius:2px; display:inline-block;}
+
+  /* ---------- HOME ---------- */
+  .home-card{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;}
+  .home-card h3{margin:0 0 6px; font-size:15px;}
+  .home-card p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.55;}
+  .quicklinks{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;}
+  .qlink{background:var(--navy); color:#fff; border-radius:14px; padding:14px 12px; text-decoration:none; display:flex; flex-direction:column; gap:6px; border:none; text-align:left;}
+  .qlink .ic{font-size:20px;}
+  .qlink b{font-size:14px;}
+  .qlink span{font-size:11.5px; color:#B9D3D2;}
+  .qlink.alt{background:var(--coral);}
+  .qlink.alt span{color:#FFE1D8;}
+
+  /* ---------- SCHEDULE ---------- */
+  .day-toggle{display:flex; gap:8px; margin-bottom:14px;}
+  .day-toggle button{flex:1; padding:10px; border-radius:12px; border:1px solid var(--line); background:var(--foam); font-weight:700; font-size:13.5px; color:var(--muted);}
+  .day-toggle button.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .timeline{position:relative; padding-left:22px;}
+  .timeline::before{content:""; position:absolute; left:6px; top:4px; bottom:4px; width:2px; background:var(--line);}
+  .tl-item{position:relative; padding-bottom:20px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-dot{position:absolute; left:-22px; top:2px; width:14px; height:14px; border-radius:50%; background:var(--foam); border:3px solid var(--coral);}
+  .tl-item.done .tl-dot{background:var(--done); border-color:var(--done);}
+  .tl-time{font-size:12px; color:var(--coral-deep); font-weight:800; margin-bottom:2px;}
+  .tl-title{font-size:15px; font-weight:700; margin-bottom:2px;}
+  .tl-item.done .tl-title{color:var(--muted); text-decoration:line-through;}
+  .tl-desc{font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:6px;}
+  .tl-meta{font-size:11px; color:#9AA9AE; margin-bottom:6px;}
+  .chip-btn{font-size:12px; padding:5px 10px; border-radius:999px; border:1px solid var(--line); background:var(--foam); color:var(--muted);}
+  .chip-btn.done{background:var(--done); color:#fff; border-color:var(--done);}
+
+  /* ---------- STAYS(숙소) ---------- */
+  .stay-card{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px;}
+  .stay-card .name{font-size:15px; font-weight:700;}
+  .stay-card .addr{font-size:12.5px; color:var(--muted); margin-top:2px;}
+  .stay-card .dates{font-size:12px; color:var(--teal); margin-top:6px; font-weight:600;}
+  .stay-card .row-actions{display:flex; gap:8px; margin-top:10px;}
+  .stay-card .row-actions a, .stay-card .row-actions button{
+    font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--sand); text-decoration:none; color:var(--ink);
+  }
+  .stay-card .row-actions .del{color:var(--red); border-color:#EAC9C2;}
+  .add-box{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:16px;}
+  .add-box label{font-size:12px; color:var(--muted); display:block; margin:10px 0 4px;}
+  .add-box label:first-child{margin-top:0;}
+  .add-box input{width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13.5px;}
+  .date-row{display:flex; gap:8px;}
+  .date-row input{flex:1;}
+  .search-btn{width:100%; margin-top:10px; background:var(--navy); color:#fff; border:none; border-radius:10px; padding:11px; font-weight:700; font-size:13.5px;}
+  .search-results{margin-top:10px;}
+  .search-item{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); gap:8px;}
+  .search-item .info{font-size:12.5px;}
+  .search-item .info b{display:block; font-size:13.5px;}
+  .search-item button{flex-shrink:0; font-size:11.5px; padding:6px 9px; border-radius:8px; border:none; background:var(--coral); color:#fff;}
+  .selected-loc{font-size:12.5px; color:var(--done); margin-top:8px;}
+  .save-btn{width:100%; margin-top:12px; background:var(--coral); color:#fff; border:none; border-radius:10px; padding:12px; font-weight:800; font-size:14px;}
+
+  /* ---------- MAP(지도) ---------- */
+  #kakaoMap{width:100%; height:360px; border-radius:16px; border:1px solid var(--line); background:var(--sand);}
+  .map-toolbar{display:flex; gap:8px; margin-bottom:10px;}
+  .map-toolbar button{flex:1; font-size:12.5px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--foam); font-weight:700; color:var(--navy);}
+  .legend{display:flex; gap:14px; margin-top:10px; flex-wrap:wrap;}
+  .legend span{font-size:11.5px; color:var(--muted); display:flex; align-items:center; gap:5px;}
+  .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
+
+  /* ---------- COURSE / FOOD (변경 없음, 이전 버전 유지) ---------- */
+  .course-scroll{display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; margin:0 -16px; padding-left:16px; padding-right:16px; scroll-snap-type:x mandatory;}
+  .course-card{flex:0 0 78%; scroll-snap-align:start; background:linear-gradient(155deg, var(--teal), var(--navy)); color:#fff; border-radius:18px; padding:16px; position:relative; min-height:150px;}
+  .course-card .num{font-size:12px; color:#BFE3E1;}
+  .course-card h3{margin:6px 0 6px; font-size:16px;}
+  .course-card p{margin:0; font-size:12.5px; color:#D8EDEC; line-height:1.5;}
+  .course-card .meta{margin-top:10px; font-size:11.5px; color:#9FD0CE;}
+  .course-detail{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:14px;}
+  .course-detail h4{margin:0 0 8px; font-size:14.5px;}
+  .stop-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line);}
+  .stop-row:last-child{border-bottom:none;}
+  .stop-name{font-size:14px; font-weight:600;}
+  .stop-name.done{color:var(--done);}
+  .stop-desc{font-size:12px; color:var(--muted); margin-top:2px;}
+  .area-title{font-size:13px; font-weight:800; color:var(--teal); margin:18px 0 6px;}
+  .area-title:first-of-type{margin-top:0;}
+  .food-row{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--line);}
+  .food-row .name{font-size:14.5px; font-weight:700;}
+  .food-row .desc{font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.5;}
+  .food-row .tag{display:inline-block; font-size:11px; color:var(--coral-deep); margin-top:4px;}
+  .food-row .go{flex-shrink:0; font-size:12px; color:var(--navy); border:1px solid var(--line); border-radius:999px; padding:6px 10px; text-decoration:none; white-space:nowrap;}
+  .add-place{display:flex; gap:8px; margin-top:16px;}
+  .add-place input{flex:1; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13.5px;}
+  .add-place button{background:var(--coral); color:#fff; border:none; border-radius:10px; padding:0 16px; font-weight:700; font-size:13.5px;}
+  .my-place{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .my-place button{background:none; border:none; color:var(--muted); font-size:12px;}
+  textarea{width:100%; min-height:160px; border:1px solid var(--line); border-radius:14px; padding:14px; font-size:14px; font-family:inherit; line-height:1.6; resize:vertical; background:var(--foam);}
+  .save-hint{font-size:12px; color:var(--muted); margin-top:8px;}
+  .empty{font-size:13px; color:var(--muted); padding:20px 0; text-align:center;}
+</style>
+</head>
+<body>
+
+<!-- 로그인 화면 -->
+<div id="authOverlay">
+  <div class="auth-card">
+    <h1>🌊 부산플래너</h1>
+    <p class="sub">해운대 1박2일 · 같이 가는 멤버끼리 로그인해서 써요</p>
+    <input id="authEmail" type="email" placeholder="이메일" autocomplete="username" />
+    <input id="authPw" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="current-password" />
+    <div class="auth-row">
+      <button class="btn-ghost" id="loginBtn">로그인</button>
+      <button class="btn-primary" id="signupBtn">회원가입</button>
+    </div>
+    <a href="#" class="auth-link" id="forgotPwLink">비밀번호를 잊으셨나요?</a>
+    <div id="authMsg"></div>
+  </div>
+</div>
+
+<!-- 닉네임 설정 (최초 가입시) -->
+<div id="nicknameOverlay" class="hidden">
+  <div class="nick-card">
+    <h3>닉네임을 정해주세요</h3>
+    <p>지도·일정에서 이 닉네임으로 표시돼요.</p>
+    <input id="nicknameInput" type="text" placeholder="예: 철수" maxlength="10" />
+    <button id="nicknameSaveBtn">시작하기</button>
+  </div>
+</div>
+
+<div id="appRoot" class="hidden">
+
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="eyebrow">부산플래너 · p-v2</div>
+      <h1>해운대에서, <em>1박2일</em></h1>
+      <p class="sub">절친 부부와 함께, 해파랑길+맛집 위주 여행</p>
+    </div>
+    <button id="logoutBtn">로그아웃</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="statSchedule">0/0</b><span>일정 체크</span></div>
+    <div class="stat"><b id="statStay">0</b><span>등록된 숙소</span></div>
+    <div class="stat"><b id="statFood">0</b><span>내가 추가한 맛집</span></div>
+  </div>
+  <div class="member-row" id="memberRow"></div>
+  <div class="wave"><svg viewBox="0 0 500 40" preserveAspectRatio="none"><path d="M0,20 C120,45 180,0 260,18 C340,36 420,6 500,22 L500,40 L0,40 Z" fill="#F5EEDC"/></svg></div>
+</div>
+
+<main>
+
+  <!-- 홈 -->
+  <section class="view active" id="view-home">
+    <h2 class="sec-title"><span class="bar"></span>이번 여행 한눈에</h2>
+    <div class="home-card">
+      <p>동탄 출발 1박2일. 1일차는 오륙도~광안리 워킹 후 언양불고기로 저녁, 센텀호텔 숙박. 2일차는 해운대~송정 워킹 후 블루라인 해변열차로 돌아와 부산역에서 동탄으로 복귀. 로그인한 멤버끼리 숙소·일정·맛집을 함께 채워가요.</p>
+    </div>
+    <div class="quicklinks">
+      <button class="qlink" onclick="go('schedule')"><span class="ic">🗓️</span><b>일정</b><span>Day1 · Day2</span></button>
+      <button class="qlink alt" onclick="go('stay')"><span class="ic">🏨</span><b>숙소</b><span>함께 등록</span></button>
+      <button class="qlink" onclick="go('map')"><span class="ic">🗺️</span><b>지도</b><span>실제 카카오맵</span></button>
+      <button class="qlink alt" onclick="go('course')"><span class="ic">🥾</span><b>해파랑길</b><span>구간 정보</span></button>
+      <button class="qlink" onclick="go('food')"><span class="ic">🍽️</span><b>맛집</b><span>큐레이션</span></button>
+      <button class="qlink alt" onclick="go('memo')"><span class="ic">📝</span><b>메모</b><span>기록</span></button>
+    </div>
+    <h2 class="sec-title"><span class="bar"></span>다음 업데이트 예정</h2>
+    <div class="home-card"><p>채팅+장소공유 → 실시간 위치공유 → 카카오T/지하철/간편다이어리 연동 순서로 이어갈 예정이에요.</p></div>
+  </section>
+
+  <!-- 일정 -->
+  <section class="view" id="view-schedule">
+    <div class="day-toggle">
+      <button class="active" onclick="setDay(1)">Day 1</button>
+      <button onclick="setDay(2)">Day 2</button>
+    </div>
+    <div class="timeline" id="timelineWrap"></div>
+  </section>
+
+  <!-- 숙소 -->
+  <section class="view" id="view-stay">
+    <h2 class="sec-title"><span class="bar"></span>등록된 숙소</h2>
+    <div id="stayList"></div>
+
+    <h2 class="sec-title"><span class="bar"></span>숙소 추가</h2>
+    <div class="add-box">
+      <label>숙소 이름 검색</label>
+      <input id="staySearchInput" type="text" placeholder="예: 센텀호텔 해운대" />
+      <button class="search-btn" onclick="searchStay()">카카오맵에서 검색</button>
+      <div class="search-results" id="staySearchResults"></div>
+      <div class="selected-loc" id="staySelectedLoc"></div>
+
+      <label>체크인 / 체크아웃</label>
+      <div class="date-row">
+        <input id="stayCheckin" type="date" />
+        <input id="stayCheckout" type="date" />
+      </div>
+      <button class="save-btn" onclick="saveStay()">숙소 등록</button>
+    </div>
+  </section>
+
+  <!-- 지도 -->
+  <section class="view" id="view-map">
+    <h2 class="sec-title"><span class="bar"></span>지도</h2>
+    <div class="map-toolbar">
+      <button onclick="moveToMyLocation()">📍 내 위치로 이동</button>
+      <button onclick="moveToHaeundae()">🌊 해운대로 이동</button>
+    </div>
+    <div id="kakaoMap"></div>
+    <div class="legend">
+      <span><i style="background:var(--coral)"></i>숙소</span>
+    </div>
+    <p style="font-size:12px; color:var(--muted); margin-top:10px;">다음 업데이트에서 맛집·장소 핀, 지하철·버스정류장, 실시간 위치공유가 추가돼요.</p>
+  </section>
+
+  <!-- 해파랑길 -->
+  <section class="view" id="view-course">
+    <h2 class="sec-title"><span class="bar"></span>해파랑길 구간</h2>
+    <div class="course-scroll">
+      <div class="course-card">
+        <div class="num">1일차</div>
+        <h3>오륙도 → 광안리</h3>
+        <p>해파랑길 1코스 구간. 오륙도 스카이워크에서 출발해 이기대를 지나 광안리 방향으로 걷는 코스예요.</p>
+        <div class="meta">해파랑길 1코스 기준</div>
+      </div>
+      <div class="course-card">
+        <div class="num">2일차</div>
+        <h3>해운대 → 송정</h3>
+        <p>미포·청사포·구덕포 '해운대 삼포'를 지나는 구간. 문탠로드와 겹쳐서 경치가 좋아요. 돌아올 땐 블루라인 해변열차 이용.</p>
+        <div class="meta">해파랑길 2코스 앞부분</div>
+      </div>
+    </div>
+    <div class="course-detail">
+      <h4>🥾 오늘 걸을 구간 체크</h4>
+      <div id="stopList"></div>
+    </div>
+  </section>
+
+  <!-- 맛집 -->
+  <section class="view" id="view-food">
+    <h2 class="sec-title"><span class="bar"></span>해운대 맛집 큐레이션</h2>
+    <div id="foodList"></div>
+    <h2 class="sec-title"><span class="bar"></span>내가 추가한 장소</h2>
+    <div class="add-place">
+      <input id="placeInput" type="text" placeholder="가게 이름 입력" />
+      <button onclick="addPlace()">추가</button>
+    </div>
+    <div id="myPlaceList"></div>
+  </section>
+
+  <!-- 메모 -->
+  <section class="view" id="view-memo">
+    <h2 class="sec-title"><span class="bar"></span>여행 메모</h2>
+    <textarea id="memoBox" placeholder="여행 중 기억하고 싶은 것, 다음에 해볼 것 등을 자유롭게 적어보세요."></textarea>
+    <div class="save-hint">이 기기에 자동 저장됩니다.</div>
+  </section>
+
+</main>
+
+<nav class="tabs">
+  <button class="active" data-tab="home" onclick="go('home')"><span class="ic">🏠</span>홈</button>
+  <button data-tab="schedule" onclick="go('schedule')"><span class="ic">🗓️</span>일정</button>
+  <button data-tab="stay" onclick="go('stay')"><span class="ic">🏨</span>숙소</button>
+  <button data-tab="map" onclick="go('map')"><span class="ic">🗺️</span>지도</button>
+  <button data-tab="course" onclick="go('course')"><span class="ic">🥾</span>해파랑길</button>
+  <button data-tab="food" onclick="go('food')"><span class="ic">🍽️</span>맛집</button>
+  <button data-tab="memo" onclick="go('memo')"><span class="ic">📝</span>메모</button>
+</nav>
+
+</div><!-- /#appRoot -->
+
+<!-- Firebase & Kakao Maps -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8f8f1585908574cb126afeeeeb73af7e&libraries=services&autoload=false"></script>
+
+<script>
+/* ---------- Firebase 초기화 (제주플래너와 동일 프로젝트, 새 컬렉션 사용) ---------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyD883ICuL7jN6gkdHR-y5FACXVbAaO2kNc",
+  authDomain: "jeju-planner-c36ce.firebaseapp.com",
+  projectId: "jeju-planner-c36ce",
+  storageBucket: "jeju-planner-c36ce.firebasestorage.app",
+  messagingSenderId: "1009495851120",
+  appId: "1:1009495851120:web:e7ec610ede2cc275bf34b5"
+};
+let auth, db, currentUser=null, myNickname='';
+try{
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  db = firebase.firestore();
+  db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+}catch(e){ console.error('Firebase init failed', e); }
+
+function withTimeout(p,ms){ return Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej({code:'timeout'}),ms))]); }
+function authMsg(s,ok){ const el=document.getElementById('authMsg'); el.textContent=s||''; el.style.color= ok? 'var(--done)':'var(--red)'; }
+function authErrorText(e){
+  const map={'auth/invalid-email':'이메일 형식이 올바르지 않아요.','auth/email-already-in-use':'이미 가입된 이메일이에요. 로그인을 눌러주세요.','auth/weak-password':'비밀번호는 6자 이상이어야 해요.','auth/user-not-found':'가입되지 않은 이메일이에요. 회원가입을 눌러주세요.','auth/wrong-password':'비밀번호가 틀렸어요.','auth/invalid-credential':'이메일 또는 비밀번호가 틀렸어요.','auth/network-request-failed':'인터넷 연결을 확인해주세요.','timeout':'연결이 안 돼요. 인터넷 연결을 확인해주세요.'};
+  return map[e.code] || ('오류가 발생했어요: '+e.message);
+}
+document.getElementById('loginBtn').onclick=()=>{
+  const email=document.getElementById('authEmail').value.trim();
+  const pw=document.getElementById('authPw').value;
+  if(!email||!pw){authMsg('이메일과 비밀번호를 입력해주세요.');return}
+  authMsg('로그인 중…');
+  withTimeout(auth.signInWithEmailAndPassword(email,pw),12000).catch(e=>authMsg(authErrorText(e)));
+};
+document.getElementById('signupBtn').onclick=()=>{
+  const email=document.getElementById('authEmail').value.trim();
+  const pw=document.getElementById('authPw').value;
+  if(!email||!pw){authMsg('이메일과 비밀번호를 입력해주세요.');return}
+  if(pw.length<6){authMsg('비밀번호는 6자 이상이어야 해요.');return}
+  authMsg('가입 중…');
+  withTimeout(auth.createUserWithEmailAndPassword(email,pw),12000).catch(e=>authMsg(authErrorText(e)));
+};
+document.getElementById('forgotPwLink').onclick=(ev)=>{
+  ev.preventDefault();
+  const email=document.getElementById('authEmail').value.trim();
+  if(!email){authMsg('재설정 메일을 받을 이메일을 먼저 입력해주세요.');return}
+  auth.sendPasswordResetEmail(email).then(()=>authMsg('비밀번호 재설정 이메일을 보냈어요.',true)).catch(e=>authMsg(authErrorText(e)));
+};
+document.getElementById('logoutBtn').onclick=()=>{ if(auth) auth.signOut(); };
+document.getElementById('nicknameSaveBtn').onclick=async()=>{
+  const nick=document.getElementById('nicknameInput').value.trim();
+  if(!nick){return}
+  await db.collection('busan_members').doc(currentUser.uid).set({nickname:nick, email:currentUser.email, joinedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  myNickname=nick;
+  document.getElementById('nicknameOverlay').classList.add('hidden');
+  boot();
+};
+
+auth.onAuthStateChanged(async(user)=>{
+  if(user){
+    currentUser=user;
+    document.getElementById('authOverlay').classList.add('hidden');
+    const doc = await db.collection('busan_members').doc(user.uid).get();
+    if(doc.exists){
+      myNickname = doc.data().nickname || user.email;
+      document.getElementById('appRoot').classList.remove('hidden');
+      boot();
+    }else{
+      document.getElementById('nicknameOverlay').classList.remove('hidden');
+    }
+  }else{
+    document.getElementById('appRoot').classList.add('hidden');
+    document.getElementById('nicknameOverlay').classList.add('hidden');
+    document.getElementById('authOverlay').classList.remove('hidden');
+  }
+});
+
+let booted=false;
+function boot(){
+  if(booted) return; booted=true;
+  listenMembers();
+  listenSchedule();
+  listenStays();
+}
+
+/* ---------- 탭 전환 ---------- */
+function go(tab){
+  document.querySelectorAll('section.view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('nav.tabs button[data-tab="'+tab+'"]').classList.add('active');
+  window.scrollTo(0,0);
+  if(tab==='map') initMapIfNeeded();
+}
+
+/* ---------- 멤버 ---------- */
+function listenMembers(){
+  db.collection('busan_members').onSnapshot(snap=>{
+    const wrap=document.getElementById('memberRow');
+    wrap.innerHTML = snap.docs.map(d=>`<span class="member-chip">${d.data().nickname||'멤버'}</span>`).join('');
+  });
+}
+
+/* ---------- 일정 (Firestore 실시간 동기화) ---------- */
+const DEFAULT_SCHEDULE=[
+  {id:'d1-1', day:1, time:'09:30', title:'동탄 출발', desc:''},
+  {id:'d1-2', day:1, time:'12:00', title:'부산 도착', desc:''},
+  {id:'d1-3', day:1, time:'13:00', title:'점심 · 돼지국밥 · 밀면', desc:''},
+  {id:'d1-4', day:1, time:'14:00', title:'오륙도 이동', desc:''},
+  {id:'d1-5', day:1, time:'18:00', title:'해파랑길 · 오륙도~광안리', desc:'해파랑길 1코스 구간 워킹'},
+  {id:'d1-6', day:1, time:'19:00', title:'저녁 · 언양불고기', desc:''},
+  {id:'d1-7', day:1, time:'20:00', title:'숙소 이동 · 센텀호텔', desc:''},
+  {id:'d1-8', day:1, time:'22:00', title:'삼촌카세', desc:''},
+  {id:'d2-1', day:2, time:'09:00', title:'해운대 이동', desc:''},
+  {id:'d2-2', day:2, time:'10:00', title:'아점 · 대구탕', desc:''},
+  {id:'d2-3', day:2, time:'13:00', title:'워킹 · 해운대~송정', desc:'해파랑길 2코스 구간'},
+  {id:'d2-4', day:2, time:'14:00', title:'점심', desc:''},
+  {id:'d2-5', day:2, time:'15:00', title:'블루라인 · 송정~해운대', desc:''},
+  {id:'d2-6', day:2, time:'17:00', title:'부산역 이동', desc:''},
+  {id:'d2-7', day:2, time:'18:10', title:'부산역 출발', desc:'21:00 동탄 도착 예정'},
+];
+let scheduleData=[];
+let currentDay=1;
+async function seedScheduleIfEmpty(){
+  const snap = await db.collection('busan_schedule').limit(1).get();
+  if(snap.empty){
+    const batch=db.batch();
+    DEFAULT_SCHEDULE.forEach(it=>{
+      batch.set(db.collection('busan_schedule').doc(it.id), Object.assign({}, it, {done:false}));
+    });
+    await batch.commit();
+  }
+}
+function listenSchedule(){
+  seedScheduleIfEmpty().then(()=>{
+    db.collection('busan_schedule').onSnapshot(snap=>{
+      scheduleData = snap.docs.map(d=>d.data()).sort((a,b)=> (a.day-b.day) || a.time.localeCompare(b.time));
+      renderSchedule();
+      renderStats();
+    });
+  });
+}
+function setDay(d){
+  currentDay=d;
+  document.querySelectorAll('.day-toggle button').forEach((b,i)=>b.classList.toggle('active', i===d-1));
+  renderSchedule();
+}
+function toggleSchedule(id){
+  const item=scheduleData.find(s=>s.id===id);
+  if(!item) return;
+  db.collection('busan_schedule').doc(id).update({done: !item.done, doneBy: myNickname});
+}
+function renderSchedule(){
+  const wrap=document.getElementById('timelineWrap');
+  const items=scheduleData.filter(s=>s.day===currentDay);
+  wrap.innerHTML = items.map(it=>`
+    <div class="tl-item ${it.done?'done':''}">
+      <div class="tl-dot"></div>
+      <div class="tl-time">${it.time}</div>
+      <div class="tl-title">${it.title}</div>
+      ${it.desc? `<div class="tl-desc">${it.desc}</div>`:''}
+      ${it.done && it.doneBy? `<div class="tl-meta">${it.doneBy}님이 체크함</div>`:''}
+      <div class="tl-actions">
+        <button class="chip-btn ${it.done?'done':''}" onclick="toggleSchedule('${it.id}')">${it.done?'✓ 완료':'완료 체크'}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ---------- 숙소 (Firestore 실시간 동기화) ---------- */
+let staysData=[];
+let selectedStayLoc=null;
+function listenStays(){
+  db.collection('busan_stays').onSnapshot(snap=>{
+    staysData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+    renderStays();
+    renderStats();
+    renderMapMarkers();
+  });
+}
+function renderStays(){
+  const wrap=document.getElementById('stayList');
+  if(staysData.length===0){ wrap.innerHTML='<div class="empty">아직 등록된 숙소가 없어요.</div>'; return; }
+  wrap.innerHTML = staysData.map(s=>`
+    <div class="stay-card">
+      <div class="name">${s.name}</div>
+      <div class="addr">${s.address||''}</div>
+      <div class="dates">${s.checkin||'?'} ~ ${s.checkout||'?'}</div>
+      <div class="row-actions">
+        <a target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(s.name)},${s.lat},${s.lng}">지도에서 보기</a>
+        <button class="del" onclick="deleteStay('${s.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+function deleteStay(id){
+  if(!confirm('이 숙소를 삭제할까요?')) return;
+  db.collection('busan_stays').doc(id).delete();
+}
+let kakaoPlacesService=null;
+function ensureKakaoServices(){
+  if(kakaoPlacesService) return;
+  if(window.kakao && window.kakao.maps){
+    kakao.maps.load(()=>{ kakaoPlacesService = new kakao.maps.services.Places(); });
+  }
+}
+ensureKakaoServices();
+function searchStay(){
+  const kw=document.getElementById('staySearchInput').value.trim();
+  if(!kw) return;
+  if(!kakaoPlacesService){ ensureKakaoServices(); setTimeout(searchStay,400); return; }
+  kakaoPlacesService.keywordSearch(kw+' 부산', (data,status)=>{
+    const wrap=document.getElementById('staySearchResults');
+    if(status!==kakao.maps.services.Status.OK || !data.length){
+      wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>';
+      return;
+    }
+    wrap.innerHTML = data.slice(0,6).map((p,i)=>`
+      <div class="search-item">
+        <div class="info"><b>${p.place_name}</b>${p.road_address_name||p.address_name}</div>
+        <button onclick='pickStayLoc(${JSON.stringify(p.place_name)}, ${p.y}, ${p.x}, ${JSON.stringify(p.road_address_name||p.address_name)})'>선택</button>
+      </div>
+    `).join('');
+  });
+}
+function pickStayLoc(name, lat, lng, address){
+  selectedStayLoc = {name, lat, lng, address};
+  document.getElementById('staySearchInput').value = name;
+  document.getElementById('staySelectedLoc').textContent = `✓ 선택됨: ${name} (${address})`;
+}
+function saveStay(){
+  const checkin=document.getElementById('stayCheckin').value;
+  const checkout=document.getElementById('stayCheckout').value;
+  if(!selectedStayLoc){ alert('먼저 검색해서 숙소 위치를 선택해주세요.'); return; }
+  db.collection('busan_stays').add({
+    name:selectedStayLoc.name, address:selectedStayLoc.address,
+    lat:selectedStayLoc.lat, lng:selectedStayLoc.lng,
+    checkin, checkout, addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    selectedStayLoc=null;
+    document.getElementById('staySearchInput').value='';
+    document.getElementById('staySearchResults').innerHTML='';
+    document.getElementById('staySelectedLoc').textContent='';
+    document.getElementById('stayCheckin').value='';
+    document.getElementById('stayCheckout').value='';
+    go('stay');
+  });
+}
+
+/* ---------- 지도 ---------- */
+let kakaoMap=null, mapMarkers=[];
+function initMapIfNeeded(){
+  if(kakaoMap || !window.kakao || !window.kakao.maps) return;
+  kakao.maps.load(()=>{
+    const container=document.getElementById('kakaoMap');
+    kakaoMap = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(35.1587,129.1604), level:6 });
+    renderMapMarkers();
+  });
+}
+function renderMapMarkers(){
+  if(!kakaoMap) return;
+  mapMarkers.forEach(m=>m.setMap(null));
+  mapMarkers=[];
+  staysData.forEach(s=>{
+    if(!s.lat||!s.lng) return;
+    const pos=new kakao.maps.LatLng(s.lat, s.lng);
+    const marker=new kakao.maps.Marker({ position:pos, map:kakaoMap });
+    const iw=new kakao.maps.InfoWindow({ content:`<div style="padding:6px 8px;font-size:12px;">🏨 ${s.name}</div>` });
+    kakao.maps.event.addListener(marker,'click',()=>iw.open(kakaoMap,marker));
+    mapMarkers.push(marker);
+  });
+}
+function moveToHaeundae(){
+  if(!kakaoMap) return;
+  kakaoMap.setCenter(new kakao.maps.LatLng(35.1587,129.1604));
+}
+function moveToMyLocation(){
+  if(!navigator.geolocation){ alert('이 브라우저는 위치 정보를 지원하지 않아요.'); return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    if(!kakaoMap) return;
+    const loc=new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+    kakaoMap.setCenter(loc);
+    new kakao.maps.Marker({ position:loc, map:kakaoMap });
+  }, ()=>{ alert('위치 정보를 가져오지 못했어요. 권한을 확인해주세요.'); });
+}
+
+/* ---------- 해파랑길 (로컬, 이전과 동일) ---------- */
+const STOPS_KEY='busan-planner-stops-v1';
+let stopsData = JSON.parse(localStorage.getItem(STOPS_KEY)||'null') || [
+  {id:'s1', name:'오륙도', desc:'해파랑길 1코스 시작점, 스카이워크', done:false},
+  {id:'s2', name:'이기대', desc:'해안 절경 산책로', done:false},
+  {id:'s3', name:'광안리', desc:'광안대교 야경 명소', done:false},
+  {id:'s4', name:'미포~청사포~구덕포', desc:'해운대 삼포, 문탠로드 경유', done:false},
+  {id:'s5', name:'송정', desc:'블루라인 해변열차 탑승 지점', done:false},
+];
+function toggleStop(id){
+  const s=stopsData.find(x=>x.id===id); s.done=!s.done;
+  localStorage.setItem(STOPS_KEY, JSON.stringify(stopsData));
+  renderStops();
+}
+function renderStops(){
+  document.getElementById('stopList').innerHTML = stopsData.map(s=>`
+    <div class="stop-row">
+      <div>
+        <div class="stop-name ${s.done?'done':''}">${s.done?'✓ ':''}${s.name}</div>
+        <div class="stop-desc">${s.desc}</div>
+      </div>
+      <button class="chip-btn ${s.done?'done':''}" onclick="toggleStop('${s.id}')">${s.done?'다녀옴':'체크'}</button>
+    </div>
+  `).join('');
+}
+
+/* ---------- 맛집 (로컬, 이전과 동일) ---------- */
+const foodData=[
+  {area:'구남로 · 해운대해수욕장', items:[
+    {name:'해목', desc:'장어덮밥·연어덮밥으로 유명한 덮밥 전문점', tag:'대기 있을 수 있어 이른 시간 추천'},
+    {name:'오반장', desc:'독특한 철판에 굽는 갈매기살 맛집', tag:'가격대 무난'},
+    {name:'상국이네', desc:'구남로 인근 현지 맛집으로 소개되는 곳', tag:''},
+  ]},
+  {area:'해운대시장', items:[
+    {name:'착한수산꽃새우대게', desc:'시장 산책과 함께 즐기는 대게·해산물', tag:'시장 구경 겸용'},
+    {name:'황금조개구이횟집', desc:'조개구이·회를 함께 즐기는 저녁 술자리용', tag:'시세에 따라 가격 변동'},
+    {name:'한다솥 해운대점', desc:'솥밥과 한식 한상, 부모님 모시고 가기 좋음', tag:'피크시간 대기 있음'},
+  ]},
+  {area:'2026 부산의 맛 가이드북 선정 (해운대구)', items:[
+    {name:'해운대암소갈비집', desc:'해운대 대표 갈비 노포', tag:'부산시 공식 가이드북 수록'},
+    {name:'비비비당', desc:'한식 기반의 코스요리', tag:'부산시 공식 가이드북 수록'},
+    {name:'선창횟집', desc:'해산물·회 전문', tag:'부산시 공식 가이드북 수록'},
+  ]},
+];
+function renderFood(){
+  document.getElementById('foodList').innerHTML = foodData.map(group=>`
+    <div class="area-title">${group.area}</div>
+    ${group.items.map(it=>`
+      <div class="food-row">
+        <div><div class="name">${it.name}</div><div class="desc">${it.desc}</div>${it.tag?`<div class="tag">${it.tag}</div>`:''}</div>
+        <a class="go" target="_blank" href="https://map.kakao.com/link/search/${encodeURIComponent(it.name+' 해운대')}">지도</a>
+      </div>
+    `).join('')}
+  `).join('');
+}
+const PLACES_KEY='busan-planner-myplaces-v1';
+let myPlaces = JSON.parse(localStorage.getItem(PLACES_KEY)||'[]');
+function addPlace(){
+  const input=document.getElementById('placeInput');
+  const name=input.value.trim();
+  if(!name) return;
+  myPlaces.push({id:'p'+Date.now(), name});
+  localStorage.setItem(PLACES_KEY, JSON.stringify(myPlaces));
+  input.value='';
+  renderMyPlaces(); renderStats();
+}
+function removePlace(id){
+  myPlaces=myPlaces.filter(p=>p.id!==id);
+  localStorage.setItem(PLACES_KEY, JSON.stringify(myPlaces));
+  renderMyPlaces(); renderStats();
+}
+function renderMyPlaces(){
+  const wrap=document.getElementById('myPlaceList');
+  if(myPlaces.length===0){ wrap.innerHTML='<div class="empty">아직 추가한 장소가 없어요.</div>'; return; }
+  wrap.innerHTML = myPlaces.map(p=>`
+    <div class="my-place">
+      <span>${p.name}</span>
+      <span>
+        <a class="go" style="margin-right:8px;" target="_blank" href="https://map.kakao.com/link/search/${encodeURIComponent(p.name+' 해운대')}">지도</a>
+        <button onclick="removePlace('${p.id}')">삭제</button>
+      </span>
+    </div>
+  `).join('');
+}
+
+/* ---------- 메모 (로컬) ---------- */
+const MEMO_KEY='busan-planner-memo-v1';
+const memoBox=document.getElementById('memoBox');
+memoBox.value = localStorage.getItem(MEMO_KEY) || '';
+memoBox.addEventListener('input', ()=> localStorage.setItem(MEMO_KEY, memoBox.value));
+
+/* ---------- 통계 ---------- */
+function renderStats(){
+  const doneS = scheduleData.filter(s=>s.done).length;
+  document.getElementById('statSchedule').textContent = `${doneS}/${scheduleData.length}`;
+  document.getElementById('statStay').textContent = staysData.length;
+  document.getElementById('statFood').textContent = myPlaces.length;
+}
+
+renderStops();
+renderFood();
+renderMyPlaces();
+</script>
+</body>
+</html>
