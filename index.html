@@ -483,6 +483,7 @@ function go(tab){
   document.querySelector('nav.tabs button[data-tab="'+tab+'"]').classList.add('active');
   window.scrollTo(0,0);
   if(tab==='map') initMapIfNeeded();
+  if(tab!=='place') pendingScheduleLink=null;
 }
 function setPlaceSub(sub){
   document.getElementById('placeSub-stay').classList.toggle('hidden', sub!=='stay');
@@ -581,7 +582,7 @@ function renderSchedule(){
         <button class="chip-btn ${it.done?'done':''}" onclick="toggleSchedule('${it.id}')">${it.done?'✓ 완료':'완료 체크'}</button>
         <button class="chip-btn" onclick="editScheduleItem('${it.id}')">✏️ 수정</button>
         <button class="chip-btn" onclick="deleteScheduleItem('${it.id}')">🗑 삭제</button>
-        <button class="chip-btn" onclick='goAddPlaceFromSchedule(${JSON.stringify(it.title)})'>📍 장소 추가</button>
+        <button class="chip-btn ${hasLinkedPlace(it.id)?'done':''}" onclick='goAddPlaceFromSchedule(${JSON.stringify(it.id)}, ${JSON.stringify(it.title)})'>${hasLinkedPlace(it.id)?'✓ 장소 연결됨':'📍 장소 추가'}</button>
       </div>
     </div>
   `).join('') + `
@@ -615,7 +616,12 @@ function promptAddSchedule(day){
   if(desc===null) return;
   db.collection('busan_schedule').add({ day, time:time.trim(), title:title.trim(), desc:desc.trim(), done:false, addedBy:myNickname });
 }
-function goAddPlaceFromSchedule(title){
+function hasLinkedPlace(scheduleId){
+  return placesData.some(p=>p.fromScheduleId===scheduleId);
+}
+let pendingScheduleLink=null;
+function goAddPlaceFromSchedule(scheduleId, title){
+  pendingScheduleLink = scheduleId;
   go('place');
   setPlaceSub('place');
   const input=document.getElementById('placeSearchInput');
@@ -772,6 +778,7 @@ function listenPlaces(){
     renderMapMarkers();
     renderPlacesList();
     renderStats();
+    if(scheduleData.length) renderSchedule();
   });
 }
 function renderPlacesList(){
@@ -810,9 +817,11 @@ function searchPlaceManual(){
   });
 }
 function addPlaceManual(name, lat, lng, address){
-  db.collection('busan_places').add({ name, address, lat:Number(lat), lng:Number(lng), addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp() }).then(()=>{
+  const linkId = pendingScheduleLink;
+  db.collection('busan_places').add({ name, address, lat:Number(lat), lng:Number(lng), addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp(), fromScheduleId: linkId||null }).then(()=>{
     document.getElementById('placeSearchInput').value='';
     document.getElementById('placeSearchResults').innerHTML='';
+    pendingScheduleLink=null;
   });
 }
 
