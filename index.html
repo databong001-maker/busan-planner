@@ -423,6 +423,11 @@ const firebaseConfig = {
   appId: "1:1009495851120:web:e7ec610ede2cc275bf34b5"
 };
 let auth, db, currentUser=null, myNickname='';
+
+/* ---------- 국토교통부(TAGO) 버스정류소 API (제주플래너와 동일 키, 전국 데이터라 재사용 가능) ---------- */
+const BUS_API_SERVICE_KEY='d1bd261aa28015904b06b3b1ff9d3966f95991cc3f9c900203ed87cfb4047e54';
+const BUS_STTN_API_URL='https://apis.data.go.kr/1613000/BusSttnInfoInqireService/getCrdntPrxmtSttnList';
+const BUS_ARRIVAL_API_URL='https://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList';
 try{
   firebase.initializeApp(firebaseConfig);
   auth = firebase.auth();
@@ -940,6 +945,26 @@ function loadTransit(){
         </div>
       `).join('');
     }, { location:loc, radius:2000, sort:kakao.maps.services.SortBy.DISTANCE });
+    loadNearbyBusStops(lat,lng,loc);
+  }, ()=>{ statusEl.textContent='위치 정보를 가져오지 못했어요. 권한을 확인해주세요.'; subwayEl.innerHTML=''; busEl.innerHTML=''; });
+}
+
+async function loadNearbyBusStops(lat,lng,loc){
+  const busEl=document.getElementById('busList');
+  try{
+    const url=`${BUS_STTN_API_URL}?serviceKey=${encodeURIComponent(BUS_API_SERVICE_KEY)}&gpsLati=${lat}&gpsLong=${lng}&numOfRows=5&pageNo=1&_type=json`;
+    const res=await fetch(url);
+    const text=await res.text();
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=JSON.parse(text);
+    const header=data&&data.response&&data.response.header;
+    if(header&&header.resultCode&&header.resultCode!=='00') throw new Error(header.resultMsg||'API 오류');
+    const items=data&&data.response&&data.response.body&&data.response.body.items?data.response.body.items.item:null;
+    const list=Array.isArray(items)?items:(items?[items]:[]);
+    if(!list.length){ busEl.innerHTML='<div class="empty">주변에서 버스정류장을 찾지 못했어요.</div>'; return; }
+    renderBusList(list);
+  }catch(e){
+    console.error('TAGO 버스정류소 조회 실패, 카카오 검색으로 대체:', e&&e.message);
     kakaoPlacesService.keywordSearch('버스정류장', (data,status)=>{
       if(status!==kakao.maps.services.Status.OK || !data.length){ busEl.innerHTML='<div class="empty">주변에서 버스정류장을 찾지 못했어요.</div>'; return; }
       busEl.innerHTML = data.slice(0,5).map(p=>`
@@ -949,7 +974,41 @@ function loadTransit(){
         </div>
       `).join('');
     }, { location:loc, radius:1000, sort:kakao.maps.services.SortBy.DISTANCE });
-  }, ()=>{ statusEl.textContent='위치 정보를 가져오지 못했어요. 권한을 확인해주세요.'; subwayEl.innerHTML=''; busEl.innerHTML=''; });
+  }
+}
+
+function renderBusList(list){
+  const busEl=document.getElementById('busList');
+  busEl.innerHTML = list.map((s,i)=>`
+    <div class="transit-row" style="flex-direction:column; align-items:stretch;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div><div class="name">🚌 ${s.nodenm}</div><div class="dist">${s.dist? Math.round(s.dist)+'m' : ''}</div></div>
+        <a class="go" target="_blank" href="https://map.kakao.com/link/to/${encodeURIComponent(s.nodenm)},${s.gpslati},${s.gpslong}">길찾기</a>
+      </div>
+      <div class="arrival-slot" id="arrival-${i}" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+      <button class="chip-btn" style="margin-top:6px; align-self:flex-start;" onclick='loadBusArrival(${i}, ${JSON.stringify(s.nodeid)}, ${JSON.stringify(s.citycode)})'>🚌 실시간 도착정보</button>
+    </div>
+  `).join('');
+}
+
+async function loadBusArrival(idx, nodeid, citycode){
+  const slot=document.getElementById('arrival-'+idx);
+  slot.textContent='도착정보 확인 중…';
+  try{
+    const url=`${BUS_ARRIVAL_API_URL}?serviceKey=${encodeURIComponent(BUS_API_SERVICE_KEY)}&cityCode=${encodeURIComponent(citycode)}&nodeId=${encodeURIComponent(nodeid)}&numOfRows=10&pageNo=1&_type=json`;
+    const res=await fetch(url);
+    const text=await res.text();
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=JSON.parse(text);
+    const header=data&&data.response&&data.response.header;
+    if(header&&header.resultCode&&header.resultCode!=='00') throw new Error(header.resultMsg||'API 오류');
+    const items=data&&data.response&&data.response.body&&data.response.body.items?data.response.body.items.item:null;
+    const list=Array.isArray(items)?items:(items?[items]:[]);
+    if(!list.length){ slot.textContent='곧 도착 예정인 버스가 없어요.'; return; }
+    slot.innerHTML = list.slice(0,5).map(b=>`${b.routeno}번 · 약 ${Math.max(0,Math.round(b.arrtime/60))}분 후 (${b.arrprevstationcnt}정류소 전)`).join('<br>');
+  }catch(e){
+    slot.textContent='실시간 도착정보를 가져오지 못했어요.';
+  }
 }
 
 /* ---------- 여행정보 (지역별 관광지+맛집) ---------- */
