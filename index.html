@@ -147,6 +147,10 @@
   .chat-msg{display:flex; flex-direction:column; margin-bottom:12px; max-width:82%;}
   .chat-msg.mine{align-items:flex-end; margin-left:auto;}
   .chat-msg .who{font-size:11px; color:var(--muted); margin-bottom:3px;}
+  .chat-msg-actions{display:flex; gap:8px; margin-top:4px;}
+  .chat-msg-actions button{background:none; border:none; font-size:10.5px; color:var(--muted); padding:0;}
+  .chat-msg.mine .chat-msg-actions{justify-content:flex-end;}
+  .edited-tag{font-size:10px; color:var(--muted); margin-left:4px;}
   .chat-bubble{background:var(--foam); border:1px solid var(--line); border-radius:14px 14px 14px 4px; padding:9px 12px; font-size:13.5px; line-height:1.5;}
   .chat-msg.mine .chat-bubble{background:var(--navy); color:#fff; border-color:var(--navy); border-radius:14px 14px 4px 14px;}
   .chat-bubble.place{background:#FFF3EE; border-color:#FFD8C9;}
@@ -719,6 +723,10 @@ function renderChat(){
   const wrap=document.getElementById('chatScroll');
   wrap.innerHTML = chatData.map(m=>{
     const mine = currentUser && m.uid===currentUser.uid;
+    const actions = mine ? `<div class="chat-msg-actions">
+        ${m.type==='text' ? `<button onclick="editChatMessage('${m.id}')">✏️ 수정</button>` : ''}
+        <button onclick="deleteChatMessage('${m.id}')">🗑 삭제</button>
+      </div>` : '';
     if(m.type==='place'){
       return `<div class="chat-msg ${mine?'mine':''}">
         <div class="who">${m.nickname}</div>
@@ -727,14 +735,27 @@ function renderChat(){
           <div class="paddr">${m.place.address||''}</div>
           <a class="pgo" target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(m.place.name)},${m.place.lat},${m.place.lng}">지도에서 보기</a>
         </div>
+        ${actions}
       </div>`;
     }
     return `<div class="chat-msg ${mine?'mine':''}">
       <div class="who">${m.nickname}</div>
-      <div class="chat-bubble">${(m.text||'').replace(/</g,'&lt;')}</div>
+      <div class="chat-bubble">${(m.text||'').replace(/</g,'&lt;')}${m.edited?'<span class="edited-tag">(수정됨)</span>':''}</div>
+      ${actions}
     </div>`;
   }).join('');
   wrap.scrollTop = wrap.scrollHeight;
+}
+function editChatMessage(id){
+  const m=chatData.find(x=>x.id===id);
+  if(!m || m.type!=='text') return;
+  const text=prompt('메시지 수정', m.text||'');
+  if(text===null || !text.trim()) return;
+  db.collection('busan_chat').doc(id).update({ text:text.trim(), edited:true });
+}
+function deleteChatMessage(id){
+  if(!confirm('이 메시지를 삭제할까요?')) return;
+  db.collection('busan_chat').doc(id).delete();
 }
 function sendChat(){
   const input=document.getElementById('chatInput');
