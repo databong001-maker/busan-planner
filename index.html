@@ -21,17 +21,11 @@
   .hidden{display:none !important;}
 
   /* ---------- AUTH ---------- */
-  #authOverlay{
-    position:fixed; inset:0; z-index:100; background:linear-gradient(160deg, var(--navy), var(--navy2) 60%, var(--teal));
-    display:flex; align-items:center; justify-content:center; padding:20px;
-  }
+  #authOverlay{position:fixed; inset:0; z-index:100; background:linear-gradient(160deg, var(--navy), var(--navy2) 60%, var(--teal)); display:flex; align-items:center; justify-content:center; padding:20px;}
   .auth-card{background:var(--foam); border-radius:20px; padding:26px 22px; width:100%; max-width:360px;}
   .auth-card h1{font-size:20px; margin:0 0 4px;}
   .auth-card p.sub{font-size:13px; color:var(--muted); margin:0 0 18px;}
-  .auth-card input{
-    width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px;
-    font-size:14px; margin-bottom:10px;
-  }
+  .auth-card input{width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:14px; margin-bottom:10px;}
   .auth-row{display:flex; gap:8px; margin-top:6px;}
   .auth-row button{flex:1; padding:12px; border-radius:10px; border:none; font-weight:700; font-size:14px;}
   .btn-primary{background:var(--coral); color:#fff;}
@@ -39,10 +33,7 @@
   #authMsg{font-size:12.5px; min-height:18px; margin-top:10px; color:var(--red);}
   .auth-link{font-size:12px; color:var(--teal); text-align:center; display:block; margin-top:12px; text-decoration:none;}
 
-  #nicknameOverlay{
-    position:fixed; inset:0; z-index:99; background:rgba(11,42,59,.55);
-    display:flex; align-items:center; justify-content:center; padding:20px;
-  }
+  #nicknameOverlay{position:fixed; inset:0; z-index:99; background:rgba(11,42,59,.55); display:flex; align-items:center; justify-content:center; padding:20px;}
   .nick-card{background:var(--foam); border-radius:18px; padding:22px; width:100%; max-width:340px;}
   .nick-card h3{margin:0 0 6px; font-size:16px;}
   .nick-card p{font-size:12.5px; color:var(--muted); margin:0 0 14px;}
@@ -50,8 +41,7 @@
   .nick-card button{width:100%; padding:12px; border:none; border-radius:10px; background:var(--coral); color:#fff; font-weight:700;}
 
   /* ---------- HERO ---------- */
-  .hero{position:relative; background:linear-gradient(160deg, var(--navy) 0%, var(--navy2) 55%, var(--teal) 100%);
-    color:#EAF4F4; padding:20px 20px 44px;}
+  .hero{position:relative; background:linear-gradient(160deg, var(--navy) 0%, var(--navy2) 55%, var(--teal) 100%); color:#EAF4F4; padding:20px 20px 44px;}
   .hero-top{display:flex; justify-content:space-between; align-items:flex-start;}
   .hero .eyebrow{font-size:13px; color:#9FD0CE; margin-bottom:6px;}
   .hero h1{font-size:25px; line-height:1.25; margin:0 0 4px; font-weight:800;}
@@ -67,10 +57,8 @@
   .member-chip{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:4px 10px; font-size:11.5px;}
 
   /* ---------- TABS ---------- */
-  nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--foam); border-top:1px solid var(--line);
-    display:flex; overflow-x:auto; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -2px 10px rgba(11,42,59,.06);}
-  nav.tabs button{flex:1 0 auto; min-width:54px; background:none; border:none; display:flex; flex-direction:column; align-items:center;
-    gap:2px; padding:6px 4px; color:var(--muted); font-size:10.5px; border-radius:10px;}
+  nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--foam); border-top:1px solid var(--line); display:flex; overflow-x:auto; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -2px 10px rgba(11,42,59,.06);}
+  nav.tabs button{flex:1 0 auto; min-width:54px; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; color:var(--muted); font-size:10.5px; border-radius:10px;}
   nav.tabs button .ic{font-size:18px;}
   nav.tabs button.active{color:var(--coral-deep); font-weight:700;}
 
@@ -82,6 +70,7 @@
   h2.sec-title{font-size:17px; font-weight:800; margin:22px 0 10px; display:flex; align-items:center; gap:8px;}
   h2.sec-title:first-child{margin-top:0;}
   h2.sec-title .bar{width:4px; height:16px; background:var(--coral); border-radius:2px; display:inline-block;}
+  h3.sub-title{font-size:14px; font-weight:800; color:var(--teal); margin:18px 0 8px;}
 
   /* ---------- HOME ---------- */
   .home-card{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px;}
@@ -113,15 +102,16 @@
   .chip-btn{font-size:12px; padding:5px 10px; border-radius:999px; border:1px solid var(--line); background:var(--foam); color:var(--muted);}
   .chip-btn.done{background:var(--done); color:#fff; border-color:var(--done);}
 
-  /* ---------- STAYS(숙소) ---------- */
+  /* ---------- 장소(숙소+맛집/장소) ---------- */
+  .place-tab-toggle{display:flex; gap:8px; margin-bottom:16px;}
+  .place-tab-toggle button{flex:1; padding:10px; border-radius:12px; border:1px solid var(--line); background:var(--foam); font-weight:700; font-size:13.5px; color:var(--muted);}
+  .place-tab-toggle button.active{background:var(--navy); color:#fff; border-color:var(--navy);}
   .stay-card{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:10px;}
   .stay-card .name{font-size:15px; font-weight:700;}
   .stay-card .addr{font-size:12.5px; color:var(--muted); margin-top:2px;}
   .stay-card .dates{font-size:12px; color:var(--teal); margin-top:6px; font-weight:600;}
   .stay-card .row-actions{display:flex; gap:8px; margin-top:10px;}
-  .stay-card .row-actions a, .stay-card .row-actions button{
-    font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--sand); text-decoration:none; color:var(--ink);
-  }
+  .stay-card .row-actions a, .stay-card .row-actions button{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:var(--sand); text-decoration:none; color:var(--ink);}
   .stay-card .row-actions .del{color:var(--red); border-color:#EAC9C2;}
   .add-box{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:14px; margin-top:16px;}
   .add-box label{font-size:12px; color:var(--muted); display:block; margin:10px 0 4px;}
@@ -137,8 +127,9 @@
   .search-item button{flex-shrink:0; font-size:11.5px; padding:6px 9px; border-radius:8px; border:none; background:var(--coral); color:#fff;}
   .selected-loc{font-size:12.5px; color:var(--done); margin-top:8px;}
   .save-btn{width:100%; margin-top:12px; background:var(--coral); color:#fff; border:none; border-radius:10px; padding:12px; font-weight:800; font-size:14px;}
+  .empty{font-size:13px; color:var(--muted); padding:20px 0; text-align:center;}
 
-  /* ---------- CHAT(채팅) ---------- */
+  /* ---------- 채팅 ---------- */
   .chat-wrap{display:flex; flex-direction:column; height:calc(100vh - 330px); min-height:360px;}
   .chat-scroll{flex:1; overflow-y:auto; padding:4px 0 10px;}
   .chat-msg{display:flex; flex-direction:column; margin-bottom:12px; max-width:82%;}
@@ -160,23 +151,21 @@
   .place-picker h4{margin:0 0 10px; font-size:14.5px;}
   .place-picker .close-picker{float:right; background:none; border:none; font-size:13px; color:var(--muted);}
 
-  /* ---------- MAP(지도) ---------- */
+  /* ---------- 지도 ---------- */
   #kakaoMap{width:100%; height:360px; border-radius:16px; border:1px solid var(--line); background:var(--sand);}
   .map-toolbar{display:flex; gap:8px; margin-bottom:10px;}
   .map-toolbar button{flex:1; font-size:12.5px; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--foam); font-weight:700; color:var(--navy);}
   .legend{display:flex; gap:14px; margin-top:10px; flex-wrap:wrap;}
   .legend span{font-size:11.5px; color:var(--muted); display:flex; align-items:center; gap:5px;}
   .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
+  .map-link-hint{display:block; margin-top:10px; font-size:12px; color:var(--teal); text-decoration:underline;}
 
-  /* ---------- COURSE / FOOD (변경 없음, 이전 버전 유지) ---------- */
-  .course-scroll{display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; margin:0 -16px; padding-left:16px; padding-right:16px; scroll-snap-type:x mandatory;}
-  .course-card{flex:0 0 78%; scroll-snap-align:start; background:linear-gradient(155deg, var(--teal), var(--navy)); color:#fff; border-radius:18px; padding:16px; position:relative; min-height:150px;}
-  .course-card .num{font-size:12px; color:#BFE3E1;}
-  .course-card h3{margin:6px 0 6px; font-size:16px;}
-  .course-card p{margin:0; font-size:12.5px; color:#D8EDEC; line-height:1.5;}
-  .course-card .meta{margin-top:10px; font-size:11.5px; color:#9FD0CE;}
-  .course-detail{background:var(--foam); border:1px solid var(--line); border-radius:16px; padding:16px; margin-top:14px;}
-  .course-detail h4{margin:0 0 8px; font-size:14.5px;}
+  /* ---------- 여행정보 ---------- */
+  .region-toggle{display:flex; gap:8px; margin-bottom:16px; overflow-x:auto;}
+  .region-toggle button{flex:0 0 auto; padding:10px 16px; border-radius:999px; border:1px solid var(--line); background:var(--foam); font-weight:700; font-size:13.5px; color:var(--muted); white-space:nowrap;}
+  .region-toggle button.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .region-toggle button.soon{opacity:.5;}
+  .region-intro{background:var(--foam); border:1px solid var(--line); border-radius:14px; padding:12px 14px; font-size:12.5px; color:var(--muted); line-height:1.55; margin-bottom:16px;}
   .stop-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line);}
   .stop-row:last-child{border-bottom:none;}
   .stop-name{font-size:14px; font-weight:600;}
@@ -189,14 +178,10 @@
   .food-row .desc{font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.5;}
   .food-row .tag{display:inline-block; font-size:11px; color:var(--coral-deep); margin-top:4px;}
   .food-row .go{flex-shrink:0; font-size:12px; color:var(--navy); border:1px solid var(--line); border-radius:999px; padding:6px 10px; text-decoration:none; white-space:nowrap;}
-  .add-place{display:flex; gap:8px; margin-top:16px;}
-  .add-place input{flex:1; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:13.5px;}
-  .add-place button{background:var(--coral); color:#fff; border:none; border-radius:10px; padding:0 16px; font-weight:700; font-size:13.5px;}
-  .my-place{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
-  .my-place button{background:none; border:none; color:var(--muted); font-size:12px;}
+
+  /* ---------- 메모 ---------- */
   textarea{width:100%; min-height:160px; border:1px solid var(--line); border-radius:14px; padding:14px; font-size:14px; font-family:inherit; line-height:1.6; resize:vertical; background:var(--foam);}
   .save-hint{font-size:12px; color:var(--muted); margin-top:8px;}
-  .empty{font-size:13px; color:var(--muted); padding:20px 0; text-align:center;}
 </style>
 </head>
 <body>
@@ -241,7 +226,7 @@
   <div class="stats">
     <div class="stat"><b id="statSchedule">0/0</b><span>일정 체크</span></div>
     <div class="stat"><b id="statStay">0</b><span>등록된 숙소</span></div>
-    <div class="stat"><b id="statFood">0</b><span>내가 추가한 맛집</span></div>
+    <div class="stat"><b id="statPlace">0</b><span>공유된 장소</span></div>
   </div>
   <div class="member-row" id="memberRow"></div>
   <div class="wave"><svg viewBox="0 0 500 40" preserveAspectRatio="none"><path d="M0,20 C120,45 180,0 260,18 C340,36 420,6 500,22 L500,40 L0,40 Z" fill="#F5EEDC"/></svg></div>
@@ -253,19 +238,18 @@
   <section class="view active" id="view-home">
     <h2 class="sec-title"><span class="bar"></span>이번 여행 한눈에</h2>
     <div class="home-card">
-      <p>동탄 출발 1박2일. 1일차는 오륙도~광안리 워킹 후 언양불고기로 저녁, 센텀호텔 숙박. 2일차는 해운대~송정 워킹 후 블루라인 해변열차로 돌아와 부산역에서 동탄으로 복귀. 로그인한 멤버끼리 숙소·일정·맛집을 함께 채워가요.</p>
+      <p>동탄 출발 1박2일. 1일차는 오륙도~광안리 워킹 후 언양불고기로 저녁, 센텀호텔 숙박. 2일차는 해운대~송정 워킹 후 블루라인 해변열차로 돌아와 부산역에서 동탄으로 복귀. 로그인한 멤버끼리 숙소·일정·장소를 함께 채워가요.</p>
     </div>
     <div class="quicklinks">
       <button class="qlink" onclick="go('schedule')"><span class="ic">🗓️</span><b>일정</b><span>Day1 · Day2</span></button>
-      <button class="qlink alt" onclick="go('stay')"><span class="ic">🏨</span><b>숙소</b><span>함께 등록</span></button>
-      <button class="qlink" onclick="go('chat')"><span class="ic">💬</span><b>채팅</b><span>장소 공유</span></button>
-      <button class="qlink alt" onclick="go('map')"><span class="ic">🗺️</span><b>지도</b><span>실제 카카오맵</span></button>
-      <button class="qlink alt" onclick="go('course')"><span class="ic">🥾</span><b>해파랑길</b><span>구간 정보</span></button>
-      <button class="qlink" onclick="go('food')"><span class="ic">🍽️</span><b>맛집</b><span>큐레이션</span></button>
+      <button class="qlink alt" onclick="go('chat')"><span class="ic">💬</span><b>채팅</b><span>장소 공유</span></button>
+      <button class="qlink" onclick="go('map')"><span class="ic">🗺️</span><b>지도</b><span>실제 카카오맵</span></button>
+      <button class="qlink alt" onclick="go('place')"><span class="ic">📍</span><b>장소</b><span>숙소·맛집 등록</span></button>
+      <button class="qlink" onclick="go('info')"><span class="ic">📖</span><b>여행정보</b><span>지역별 관광·맛집</span></button>
       <button class="qlink alt" onclick="go('memo')"><span class="ic">📝</span><b>메모</b><span>기록</span></button>
     </div>
     <h2 class="sec-title"><span class="bar"></span>다음 업데이트 예정</h2>
-    <div class="home-card"><p>실시간 위치공유 → 카카오T/지하철/간편다이어리 연동 순서로 이어갈 예정이에요.</p></div>
+    <div class="home-card"><p>실시간 위치공유 → 카카오T 호출 연동 → 지하철 정보 → 간편다이어리 연동 순서로 이어갈 예정이에요. "교통" 탭은 그때 새로 생길 거예요.</p></div>
   </section>
 
   <!-- 일정 -->
@@ -275,28 +259,6 @@
       <button onclick="setDay(2)">Day 2</button>
     </div>
     <div class="timeline" id="timelineWrap"></div>
-  </section>
-
-  <!-- 숙소 -->
-  <section class="view" id="view-stay">
-    <h2 class="sec-title"><span class="bar"></span>등록된 숙소</h2>
-    <div id="stayList"></div>
-
-    <h2 class="sec-title"><span class="bar"></span>숙소 추가</h2>
-    <div class="add-box">
-      <label>숙소 이름 검색</label>
-      <input id="staySearchInput" type="text" placeholder="예: 센텀호텔 해운대" />
-      <button class="search-btn" onclick="searchStay()">카카오맵에서 검색</button>
-      <div class="search-results" id="staySearchResults"></div>
-      <div class="selected-loc" id="staySelectedLoc"></div>
-
-      <label>체크인 / 체크아웃</label>
-      <div class="date-row">
-        <input id="stayCheckin" type="date" />
-        <input id="stayCheckout" type="date" />
-      </div>
-      <button class="save-btn" onclick="saveStay()">숙소 등록</button>
-    </div>
   </section>
 
   <!-- 채팅 -->
@@ -312,7 +274,7 @@
     </div>
   </section>
 
-  <!-- 장소 공유 검색 팝업 -->
+  <!-- 장소 공유 검색 팝업 (채팅용) -->
   <div class="place-picker hidden" id="placePicker">
     <button class="close-picker" onclick="closePlacePicker()">닫기 ✕</button>
     <h4>📍 공유할 장소 검색</h4>
@@ -331,47 +293,59 @@
     <div id="kakaoMap"></div>
     <div class="legend">
       <span><i style="background:var(--coral)"></i>숙소</span>
-      <span><i style="background:var(--teal)"></i>채팅에서 공유한 장소</span>
+      <span><i style="background:var(--teal)"></i>공유된 장소</span>
     </div>
-    <p style="font-size:12px; color:var(--muted); margin-top:10px;">다음 업데이트에서 지하철·버스정류장, 실시간 위치공유가 추가돼요.</p>
-
-    <h2 class="sec-title" style="margin-top:22px;"><span class="bar"></span>공유된 장소 목록</h2>
-    <div id="placesList"></div>
+    <a class="map-link-hint" onclick="go('place')">숙소·장소 추가/삭제는 "장소" 탭에서 해주세요 →</a>
   </section>
 
-  <!-- 해파랑길 -->
-  <section class="view" id="view-course">
-    <h2 class="sec-title"><span class="bar"></span>해파랑길 구간</h2>
-    <div class="course-scroll">
-      <div class="course-card">
-        <div class="num">1일차</div>
-        <h3>오륙도 → 광안리</h3>
-        <p>해파랑길 1코스 구간. 오륙도 스카이워크에서 출발해 이기대를 지나 광안리 방향으로 걷는 코스예요.</p>
-        <div class="meta">해파랑길 1코스 기준</div>
-      </div>
-      <div class="course-card">
-        <div class="num">2일차</div>
-        <h3>해운대 → 송정</h3>
-        <p>미포·청사포·구덕포 '해운대 삼포'를 지나는 구간. 문탠로드와 겹쳐서 경치가 좋아요. 돌아올 땐 블루라인 해변열차 이용.</p>
-        <div class="meta">해파랑길 2코스 앞부분</div>
+  <!-- 장소 (숙소 + 맛집/장소 추가) -->
+  <section class="view" id="view-place">
+    <div class="place-tab-toggle">
+      <button class="active" id="placeSubStayBtn" onclick="setPlaceSub('stay')">🏨 숙소</button>
+      <button id="placeSubPlaceBtn" onclick="setPlaceSub('place')">📍 맛집·장소</button>
+    </div>
+
+    <div id="placeSub-stay">
+      <h2 class="sec-title"><span class="bar"></span>등록된 숙소</h2>
+      <div id="stayList"></div>
+      <h2 class="sec-title"><span class="bar"></span>숙소 추가</h2>
+      <div class="add-box">
+        <label>숙소 이름 검색</label>
+        <input id="staySearchInput" type="text" placeholder="예: 센텀호텔 해운대" />
+        <button class="search-btn" onclick="searchStay()">카카오맵에서 검색</button>
+        <div class="search-results" id="staySearchResults"></div>
+        <div class="selected-loc" id="staySelectedLoc"></div>
+        <label>체크인 / 체크아웃</label>
+        <div class="date-row">
+          <input id="stayCheckin" type="date" />
+          <input id="stayCheckout" type="date" />
+        </div>
+        <button class="save-btn" onclick="saveStay()">숙소 등록</button>
       </div>
     </div>
-    <div class="course-detail">
-      <h4>🥾 오늘 걸을 구간 체크</h4>
-      <div id="stopList"></div>
+
+    <div id="placeSub-place" class="hidden">
+      <h2 class="sec-title"><span class="bar"></span>등록된 맛집·장소</h2>
+      <div id="placesList"></div>
+      <h2 class="sec-title"><span class="bar"></span>맛집·장소 추가</h2>
+      <div class="add-box">
+        <label>이름 검색</label>
+        <input id="placeSearchInput" type="text" placeholder="예: 해운대암소갈비집" />
+        <button class="search-btn" onclick="searchPlaceManual()">카카오맵에서 검색</button>
+        <div class="search-results" id="placeSearchResults"></div>
+      </div>
     </div>
   </section>
 
-  <!-- 맛집 -->
-  <section class="view" id="view-food">
-    <h2 class="sec-title"><span class="bar"></span>해운대 맛집 큐레이션</h2>
-    <div id="foodList"></div>
-    <h2 class="sec-title"><span class="bar"></span>내가 추가한 장소</h2>
-    <div class="add-place">
-      <input id="placeInput" type="text" placeholder="가게 이름 입력" />
-      <button onclick="addPlace()">추가</button>
-    </div>
-    <div id="myPlaceList"></div>
+  <!-- 여행정보 -->
+  <section class="view" id="view-info">
+    <h2 class="sec-title"><span class="bar"></span>여행정보</h2>
+    <div class="region-toggle" id="regionToggle"></div>
+    <div class="region-intro" id="regionIntro"></div>
+    <h3 class="sub-title">🏞️ 관광지</h3>
+    <div id="infoAttractions"></div>
+    <h3 class="sub-title">🍽️ 맛집</h3>
+    <div id="infoFood"></div>
   </section>
 
   <!-- 메모 -->
@@ -386,11 +360,10 @@
 <nav class="tabs">
   <button class="active" data-tab="home" onclick="go('home')"><span class="ic">🏠</span>홈</button>
   <button data-tab="schedule" onclick="go('schedule')"><span class="ic">🗓️</span>일정</button>
-  <button data-tab="stay" onclick="go('stay')"><span class="ic">🏨</span>숙소</button>
   <button data-tab="chat" onclick="go('chat')"><span class="ic">💬</span>채팅</button>
   <button data-tab="map" onclick="go('map')"><span class="ic">🗺️</span>지도</button>
-  <button data-tab="course" onclick="go('course')"><span class="ic">🥾</span>해파랑길</button>
-  <button data-tab="food" onclick="go('food')"><span class="ic">🍽️</span>맛집</button>
+  <button data-tab="place" onclick="go('place')"><span class="ic">📍</span>장소</button>
+  <button data-tab="info" onclick="go('info')"><span class="ic">📖</span>여행정보</button>
   <button data-tab="memo" onclick="go('memo')"><span class="ic">📝</span>메모</button>
 </nav>
 
@@ -403,7 +376,7 @@
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8f8f1585908574cb126afeeeeb73af7e&libraries=services&autoload=false"></script>
 
 <script>
-/* ---------- Firebase 초기화 (제주플래너와 동일 프로젝트, 새 컬렉션 사용) ---------- */
+/* ---------- Firebase 초기화 ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyD883ICuL7jN6gkdHR-y5FACXVbAaO2kNc",
   authDomain: "jeju-planner-c36ce.firebaseapp.com",
@@ -497,6 +470,12 @@ function go(tab){
   window.scrollTo(0,0);
   if(tab==='map') initMapIfNeeded();
 }
+function setPlaceSub(sub){
+  document.getElementById('placeSub-stay').classList.toggle('hidden', sub!=='stay');
+  document.getElementById('placeSub-place').classList.toggle('hidden', sub!=='place');
+  document.getElementById('placeSubStayBtn').classList.toggle('active', sub==='stay');
+  document.getElementById('placeSubPlaceBtn').classList.toggle('active', sub==='place');
+}
 
 /* ---------- 멤버 ---------- */
 function listenMembers(){
@@ -506,7 +485,7 @@ function listenMembers(){
   });
 }
 
-/* ---------- 일정 (Firestore 실시간 동기화) ---------- */
+/* ---------- 일정 ---------- */
 const DEFAULT_SCHEDULE=[
   {id:'d1-1', day:1, time:'09:30', title:'동탄 출발', desc:''},
   {id:'d1-2', day:1, time:'12:00', title:'부산 도착', desc:''},
@@ -530,9 +509,7 @@ async function seedScheduleIfEmpty(){
   const snap = await db.collection('busan_schedule').limit(1).get();
   if(snap.empty){
     const batch=db.batch();
-    DEFAULT_SCHEDULE.forEach(it=>{
-      batch.set(db.collection('busan_schedule').doc(it.id), Object.assign({}, it, {done:false}));
-    });
+    DEFAULT_SCHEDULE.forEach(it=>{ batch.set(db.collection('busan_schedule').doc(it.id), Object.assign({}, it, {done:false})); });
     await batch.commit();
   }
 }
@@ -572,7 +549,7 @@ function renderSchedule(){
   `).join('');
 }
 
-/* ---------- 숙소 (Firestore 실시간 동기화) ---------- */
+/* ---------- 숙소 ---------- */
 let staysData=[];
 let selectedStayLoc=null;
 function listenStays(){
@@ -616,11 +593,8 @@ function searchStay(){
   if(!kakaoPlacesService){ ensureKakaoServices(); setTimeout(searchStay,400); return; }
   kakaoPlacesService.keywordSearch(kw+' 부산', (data,status)=>{
     const wrap=document.getElementById('staySearchResults');
-    if(status!==kakao.maps.services.Status.OK || !data.length){
-      wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>';
-      return;
-    }
-    wrap.innerHTML = data.slice(0,6).map((p,i)=>`
+    if(status!==kakao.maps.services.Status.OK || !data.length){ wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>'; return; }
+    wrap.innerHTML = data.slice(0,6).map(p=>`
       <div class="search-item">
         <div class="info"><b>${p.place_name}</b>${p.road_address_name||p.address_name}</div>
         <button onclick='pickStayLoc(${JSON.stringify(p.place_name)}, ${p.y}, ${p.x}, ${JSON.stringify(p.road_address_name||p.address_name)})'>선택</button>
@@ -638,8 +612,7 @@ function saveStay(){
   const checkout=document.getElementById('stayCheckout').value;
   if(!selectedStayLoc){ alert('먼저 검색해서 숙소 위치를 선택해주세요.'); return; }
   db.collection('busan_stays').add({
-    name:selectedStayLoc.name, address:selectedStayLoc.address,
-    lat:selectedStayLoc.lat, lng:selectedStayLoc.lng,
+    name:selectedStayLoc.name, address:selectedStayLoc.address, lat:selectedStayLoc.lat, lng:selectedStayLoc.lng,
     checkin, checkout, addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp()
   }).then(()=>{
     selectedStayLoc=null;
@@ -648,7 +621,6 @@ function saveStay(){
     document.getElementById('staySelectedLoc').textContent='';
     document.getElementById('stayCheckin').value='';
     document.getElementById('stayCheckout').value='';
-    go('stay');
   });
 }
 
@@ -685,16 +657,10 @@ function sendChat(){
   const input=document.getElementById('chatInput');
   const text=input.value.trim();
   if(!text) return;
-  db.collection('busan_chat').add({
-    type:'text', text, uid:currentUser.uid, nickname:myNickname,
-    createdAt:firebase.firestore.FieldValue.serverTimestamp()
-  });
+  db.collection('busan_chat').add({ type:'text', text, uid:currentUser.uid, nickname:myNickname, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
   input.value='';
 }
-let placePickerService=null;
-function openPlacePicker(){
-  document.getElementById('placePicker').classList.remove('hidden');
-}
+function openPlacePicker(){ document.getElementById('placePicker').classList.remove('hidden'); }
 function closePlacePicker(){
   document.getElementById('placePicker').classList.add('hidden');
   document.getElementById('placePickerResults').innerHTML='';
@@ -706,10 +672,7 @@ function searchPlacePicker(){
   if(!kakaoPlacesService){ ensureKakaoServices(); setTimeout(searchPlacePicker,400); return; }
   kakaoPlacesService.keywordSearch(kw+' 부산', (data,status)=>{
     const wrap=document.getElementById('placePickerResults');
-    if(status!==kakao.maps.services.Status.OK || !data.length){
-      wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>';
-      return;
-    }
+    if(status!==kakao.maps.services.Status.OK || !data.length){ wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>'; return; }
     wrap.innerHTML = data.slice(0,6).map(p=>`
       <div class="search-item">
         <div class="info"><b>${p.place_name}</b>${p.road_address_name||p.address_name}</div>
@@ -720,31 +683,31 @@ function searchPlacePicker(){
 }
 function shareChatPlace(name, lat, lng, address){
   const place={name, address, lat:Number(lat), lng:Number(lng)};
-  db.collection('busan_chat').add({
-    type:'place', place, uid:currentUser.uid, nickname:myNickname,
-    createdAt:firebase.firestore.FieldValue.serverTimestamp()
-  });
+  db.collection('busan_chat').add({ type:'place', place, uid:currentUser.uid, nickname:myNickname, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
   db.collection('busan_places').add(Object.assign({}, place, {addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp()}));
   closePlacePicker();
   go('chat');
 }
+
+/* ---------- 장소(공유 맛집/장소) ---------- */
 let placesData=[];
 function listenPlaces(){
   db.collection('busan_places').onSnapshot(snap=>{
     placesData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
     renderMapMarkers();
     renderPlacesList();
+    renderStats();
   });
 }
 function renderPlacesList(){
   const wrap=document.getElementById('placesList');
   if(!wrap) return;
-  if(placesData.length===0){ wrap.innerHTML='<div class="empty">아직 채팅에서 공유한 장소가 없어요.</div>'; return; }
+  if(placesData.length===0){ wrap.innerHTML='<div class="empty">아직 등록된 맛집·장소가 없어요.</div>'; return; }
   wrap.innerHTML = placesData.map(p=>`
     <div class="stay-card">
       <div class="name">📍 ${p.name}</div>
       <div class="addr">${p.address||''}</div>
-      <div class="dates" style="color:var(--muted)">${p.addedBy?p.addedBy+'님이 공유':''}</div>
+      <div class="dates" style="color:var(--muted)">${p.addedBy?p.addedBy+'님이 추가':''}</div>
       <div class="row-actions">
         <a target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(p.name)},${p.lat},${p.lng}">지도에서 보기</a>
         <button class="del" onclick="deletePlace('${p.id}')">삭제</button>
@@ -753,8 +716,29 @@ function renderPlacesList(){
   `).join('');
 }
 function deletePlace(id){
-  if(!confirm('이 장소를 목록/지도에서 삭제할까요? (채팅 기록은 남아요)')) return;
+  if(!confirm('이 장소를 목록/지도에서 삭제할까요?')) return;
   db.collection('busan_places').doc(id).delete();
+}
+function searchPlaceManual(){
+  const kw=document.getElementById('placeSearchInput').value.trim();
+  if(!kw) return;
+  if(!kakaoPlacesService){ ensureKakaoServices(); setTimeout(searchPlaceManual,400); return; }
+  kakaoPlacesService.keywordSearch(kw+' 부산', (data,status)=>{
+    const wrap=document.getElementById('placeSearchResults');
+    if(status!==kakao.maps.services.Status.OK || !data.length){ wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>'; return; }
+    wrap.innerHTML = data.slice(0,6).map(p=>`
+      <div class="search-item">
+        <div class="info"><b>${p.place_name}</b>${p.road_address_name||p.address_name}</div>
+        <button onclick='addPlaceManual(${JSON.stringify(p.place_name)}, ${p.y}, ${p.x}, ${JSON.stringify(p.road_address_name||p.address_name)})'>추가</button>
+      </div>
+    `).join('');
+  });
+}
+function addPlaceManual(name, lat, lng, address){
+  db.collection('busan_places').add({ name, address, lat:Number(lat), lng:Number(lng), addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp() }).then(()=>{
+    document.getElementById('placeSearchInput').value='';
+    document.getElementById('placeSearchResults').innerHTML='';
+  });
 }
 
 /* ---------- 지도 ---------- */
@@ -792,10 +776,7 @@ function renderMapMarkers(){
     mapMarkers.push(marker);
   });
 }
-function moveToHaeundae(){
-  if(!kakaoMap) return;
-  kakaoMap.setCenter(new kakao.maps.LatLng(35.1587,129.1604));
-}
+function moveToHaeundae(){ if(!kakaoMap) return; kakaoMap.setCenter(new kakao.maps.LatLng(35.1587,129.1604)); }
 function moveToMyLocation(){
   if(!navigator.geolocation){ alert('이 브라우저는 위치 정보를 지원하지 않아요.'); return; }
   navigator.geolocation.getCurrentPosition(pos=>{
@@ -806,90 +787,102 @@ function moveToMyLocation(){
   }, ()=>{ alert('위치 정보를 가져오지 못했어요. 권한을 확인해주세요.'); });
 }
 
-/* ---------- 해파랑길 (로컬, 이전과 동일) ---------- */
-const STOPS_KEY='busan-planner-stops-v1';
-let stopsData = JSON.parse(localStorage.getItem(STOPS_KEY)||'null') || [
-  {id:'s1', name:'오륙도', desc:'해파랑길 1코스 시작점, 스카이워크', done:false},
-  {id:'s2', name:'이기대', desc:'해안 절경 산책로', done:false},
-  {id:'s3', name:'광안리', desc:'광안대교 야경 명소', done:false},
-  {id:'s4', name:'미포~청사포~구덕포', desc:'해운대 삼포, 문탠로드 경유', done:false},
-  {id:'s5', name:'송정', desc:'블루라인 해변열차 탑승 지점', done:false},
-];
-function toggleStop(id){
-  const s=stopsData.find(x=>x.id===id); s.done=!s.done;
-  localStorage.setItem(STOPS_KEY, JSON.stringify(stopsData));
-  renderStops();
+/* ---------- 여행정보 (지역별 관광지+맛집) ---------- */
+const TRAVEL_INFO = {
+  haeundae: {
+    label:'해운대',
+    intro:'미포~청사포~구덕포~송정으로 이어지는 해운대 삼포 구간과 주변 맛집이에요.',
+    attractions:[
+      {id:'hd-1', name:'미포', desc:'해운대 해수욕장 끝자락, 해변열차(블루라인) 시작 지점'},
+      {id:'hd-2', name:'문탠로드', desc:'달맞이길 산책로, 전망 좋은 구간'},
+      {id:'hd-3', name:'청사포', desc:'작은 어촌마을, 다이아몬드 브릿지 전망대'},
+      {id:'hd-4', name:'구덕포', desc:'조용한 포구, 삼포 중 마지막 지점'},
+      {id:'hd-5', name:'송정', desc:'블루라인 해변열차 탑승 지점, 송정해수욕장'},
+    ],
+    food:[
+      {area:'구남로 · 해운대해수욕장', items:[
+        {name:'해목', desc:'장어덮밥·연어덮밥으로 유명한 덮밥 전문점', tag:'대기 있을 수 있어 이른 시간 추천'},
+        {name:'오반장', desc:'독특한 철판에 굽는 갈매기살 맛집', tag:'가격대 무난'},
+        {name:'상국이네', desc:'구남로 인근 현지 맛집으로 소개되는 곳', tag:''},
+      ]},
+      {area:'해운대시장', items:[
+        {name:'착한수산꽃새우대게', desc:'시장 산책과 함께 즐기는 대게·해산물', tag:'시장 구경 겸용'},
+        {name:'황금조개구이횟집', desc:'조개구이·회를 함께 즐기는 저녁 술자리용', tag:'시세에 따라 가격 변동'},
+        {name:'한다솥 해운대점', desc:'솥밥과 한식 한상, 부모님 모시고 가기 좋음', tag:'피크시간 대기 있음'},
+      ]},
+      {area:'2026 부산의 맛 가이드북 선정 (해운대구)', items:[
+        {name:'해운대암소갈비집', desc:'해운대 대표 갈비 노포', tag:'부산시 공식 가이드북 수록'},
+        {name:'비비비당', desc:'한식 기반의 코스요리', tag:'부산시 공식 가이드북 수록'},
+        {name:'선창횟집', desc:'해산물·회 전문', tag:'부산시 공식 가이드북 수록'},
+      ]},
+    ]
+  },
+  gwangalli: {
+    label:'광안리',
+    intro:'오륙도~이기대~광안리로 이어지는 1일차 구간과 주변 맛집이에요.',
+    attractions:[
+      {id:'ga-1', name:'오륙도 해맞이공원', desc:'유리 바닥 스카이워크, 일출·일몰 명소, 해파랑길 시작점'},
+      {id:'ga-2', name:'이기대 해안산책로', desc:'오륙도~동생말 4.7km, 화산암 지층과 광안대교 조망 트레킹 코스'},
+      {id:'ga-3', name:'어울마당', desc:'이기대 구간 중 대표 해맞이 명소, 영화 <해운대> 촬영지'},
+      {id:'ga-4', name:'광안리해수욕장', desc:'광안대교 야경으로 유명한 해변'},
+      {id:'ga-5', name:'용호만', desc:'해운대·광안리를 한적하게 감상할 수 있는 도심형 마리나'},
+    ],
+    food:[
+      {area:'광안리 해변 · 카페거리', items:[
+        {name:'BCBL커피로스터즈', desc:'광안대교 뷰가 보이는 커피 로스터리 카페', tag:'해질녘 뷰 추천'},
+        {name:'폴레폴레', desc:'소금빵과 드립커피가 좋은 베이커리 카페', tag:'산책 후 들르기 좋음'},
+      ]},
+      {area:'광안리 한식', items:[
+        {name:'자매국밥', desc:'돼지국밥·내장국밥 전문, 광안리해수욕장 도보 5분', tag:''},
+        {name:'비비재', desc:'정갈한 정통 비빔밥 전문점', tag:'혼밥·데이트 모두 무난'},
+        {name:'화달구 광안리점', desc:'연탄 쭈꾸미로 유명한 맛집', tag:'브레이크타임 15~16:30'},
+      ]},
+    ]
+  }
+};
+const INFO_DONE_KEY='busan-planner-info-done-v1';
+let infoDoneMap = JSON.parse(localStorage.getItem(INFO_DONE_KEY)||'{}');
+let currentRegion='haeundae';
+function renderRegionToggle(){
+  const wrap=document.getElementById('regionToggle');
+  const keys=Object.keys(TRAVEL_INFO);
+  wrap.innerHTML = keys.map(k=>`<button class="${k===currentRegion?'active':''}" onclick="setRegion('${k}')">${TRAVEL_INFO[k].label}</button>`).join('')
+    + `<button class="soon" disabled>+ 태종대 등 (다음 업데이트)</button>`;
 }
-function renderStops(){
-  document.getElementById('stopList').innerHTML = stopsData.map(s=>`
+function setRegion(k){
+  currentRegion=k;
+  renderRegionToggle();
+  renderRegionContent();
+}
+function toggleInfoDone(id){
+  infoDoneMap[id]=!infoDoneMap[id];
+  localStorage.setItem(INFO_DONE_KEY, JSON.stringify(infoDoneMap));
+  renderRegionContent();
+}
+function renderRegionContent(){
+  const region=TRAVEL_INFO[currentRegion];
+  document.getElementById('regionIntro').textContent = region.intro;
+  document.getElementById('infoAttractions').innerHTML = region.attractions.map(a=>`
     <div class="stop-row">
       <div>
-        <div class="stop-name ${s.done?'done':''}">${s.done?'✓ ':''}${s.name}</div>
-        <div class="stop-desc">${s.desc}</div>
+        <div class="stop-name ${infoDoneMap[a.id]?'done':''}">${infoDoneMap[a.id]?'✓ ':''}${a.name}</div>
+        <div class="stop-desc">${a.desc}</div>
       </div>
-      <button class="chip-btn ${s.done?'done':''}" onclick="toggleStop('${s.id}')">${s.done?'다녀옴':'체크'}</button>
+      <button class="chip-btn ${infoDoneMap[a.id]?'done':''}" onclick="toggleInfoDone('${a.id}')">${infoDoneMap[a.id]?'다녀옴':'체크'}</button>
     </div>
   `).join('');
-}
-
-/* ---------- 맛집 (로컬, 이전과 동일) ---------- */
-const foodData=[
-  {area:'구남로 · 해운대해수욕장', items:[
-    {name:'해목', desc:'장어덮밥·연어덮밥으로 유명한 덮밥 전문점', tag:'대기 있을 수 있어 이른 시간 추천'},
-    {name:'오반장', desc:'독특한 철판에 굽는 갈매기살 맛집', tag:'가격대 무난'},
-    {name:'상국이네', desc:'구남로 인근 현지 맛집으로 소개되는 곳', tag:''},
-  ]},
-  {area:'해운대시장', items:[
-    {name:'착한수산꽃새우대게', desc:'시장 산책과 함께 즐기는 대게·해산물', tag:'시장 구경 겸용'},
-    {name:'황금조개구이횟집', desc:'조개구이·회를 함께 즐기는 저녁 술자리용', tag:'시세에 따라 가격 변동'},
-    {name:'한다솥 해운대점', desc:'솥밥과 한식 한상, 부모님 모시고 가기 좋음', tag:'피크시간 대기 있음'},
-  ]},
-  {area:'2026 부산의 맛 가이드북 선정 (해운대구)', items:[
-    {name:'해운대암소갈비집', desc:'해운대 대표 갈비 노포', tag:'부산시 공식 가이드북 수록'},
-    {name:'비비비당', desc:'한식 기반의 코스요리', tag:'부산시 공식 가이드북 수록'},
-    {name:'선창횟집', desc:'해산물·회 전문', tag:'부산시 공식 가이드북 수록'},
-  ]},
-];
-function renderFood(){
-  document.getElementById('foodList').innerHTML = foodData.map(group=>`
+  document.getElementById('infoFood').innerHTML = region.food.map(group=>`
     <div class="area-title">${group.area}</div>
     ${group.items.map(it=>`
       <div class="food-row">
         <div><div class="name">${it.name}</div><div class="desc">${it.desc}</div>${it.tag?`<div class="tag">${it.tag}</div>`:''}</div>
-        <a class="go" target="_blank" href="https://map.kakao.com/link/search/${encodeURIComponent(it.name+' 해운대')}">지도</a>
+        <a class="go" target="_blank" href="https://map.kakao.com/link/search/${encodeURIComponent(it.name+' 부산')}">지도</a>
       </div>
     `).join('')}
   `).join('');
 }
-const PLACES_KEY='busan-planner-myplaces-v1';
-let myPlaces = JSON.parse(localStorage.getItem(PLACES_KEY)||'[]');
-function addPlace(){
-  const input=document.getElementById('placeInput');
-  const name=input.value.trim();
-  if(!name) return;
-  myPlaces.push({id:'p'+Date.now(), name});
-  localStorage.setItem(PLACES_KEY, JSON.stringify(myPlaces));
-  input.value='';
-  renderMyPlaces(); renderStats();
-}
-function removePlace(id){
-  myPlaces=myPlaces.filter(p=>p.id!==id);
-  localStorage.setItem(PLACES_KEY, JSON.stringify(myPlaces));
-  renderMyPlaces(); renderStats();
-}
-function renderMyPlaces(){
-  const wrap=document.getElementById('myPlaceList');
-  if(myPlaces.length===0){ wrap.innerHTML='<div class="empty">아직 추가한 장소가 없어요.</div>'; return; }
-  wrap.innerHTML = myPlaces.map(p=>`
-    <div class="my-place">
-      <span>${p.name}</span>
-      <span>
-        <a class="go" style="margin-right:8px;" target="_blank" href="https://map.kakao.com/link/search/${encodeURIComponent(p.name+' 해운대')}">지도</a>
-        <button onclick="removePlace('${p.id}')">삭제</button>
-      </span>
-    </div>
-  `).join('');
-}
+renderRegionToggle();
+renderRegionContent();
 
 /* ---------- 메모 (로컬) ---------- */
 const MEMO_KEY='busan-planner-memo-v1';
@@ -902,12 +895,8 @@ function renderStats(){
   const doneS = scheduleData.filter(s=>s.done).length;
   document.getElementById('statSchedule').textContent = `${doneS}/${scheduleData.length}`;
   document.getElementById('statStay').textContent = staysData.length;
-  document.getElementById('statFood').textContent = myPlaces.length;
+  document.getElementById('statPlace').textContent = placesData.length;
 }
-
-renderStops();
-renderFood();
-renderMyPlaces();
 </script>
 </body>
 </html>
