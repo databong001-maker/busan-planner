@@ -623,7 +623,7 @@ function promptAddSchedule(day){
   db.collection('busan_schedule').add({ day, time:time.trim(), title:title.trim(), desc:desc.trim(), done:false, addedBy:myNickname });
 }
 function hasLinkedPlace(scheduleId){
-  return placesData.some(p=>p.fromScheduleId===scheduleId);
+  return placesData.some(p=>p.fromScheduleId===scheduleId) || staysData.some(s=>s.fromScheduleId===scheduleId);
 }
 let pendingScheduleLink=null;
 function goAddPlaceFromSchedule(scheduleId, title){
@@ -644,6 +644,7 @@ function listenStays(){
     renderStays();
     renderStats();
     renderMapMarkers();
+    if(scheduleData.length) renderSchedule();
   });
 }
 function renderStays(){
@@ -698,9 +699,10 @@ function saveStay(){
   const checkin=document.getElementById('stayCheckin').value;
   const checkout=document.getElementById('stayCheckout').value;
   if(!selectedStayLoc){ alert('먼저 검색해서 숙소 위치를 선택해주세요.'); return; }
+  const linkId = pendingScheduleLink;
   db.collection('busan_stays').add({
     name:selectedStayLoc.name, address:selectedStayLoc.address, lat:selectedStayLoc.lat, lng:selectedStayLoc.lng,
-    checkin, checkout, addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp()
+    checkin, checkout, addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp(), fromScheduleId: linkId||null
   }).then(()=>{
     selectedStayLoc=null;
     document.getElementById('staySearchInput').value='';
@@ -708,6 +710,7 @@ function saveStay(){
     document.getElementById('staySelectedLoc').textContent='';
     document.getElementById('stayCheckin').value='';
     document.getElementById('stayCheckout').value='';
+    pendingScheduleLink=null;
   });
 }
 
