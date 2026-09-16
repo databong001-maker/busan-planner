@@ -334,6 +334,9 @@
       <span><i style="background:var(--teal)"></i>채팅에서 공유한 장소</span>
     </div>
     <p style="font-size:12px; color:var(--muted); margin-top:10px;">다음 업데이트에서 지하철·버스정류장, 실시간 위치공유가 추가돼요.</p>
+
+    <h2 class="sec-title" style="margin-top:22px;"><span class="bar"></span>공유된 장소 목록</h2>
+    <div id="placesList"></div>
   </section>
 
   <!-- 해파랑길 -->
@@ -730,7 +733,28 @@ function listenPlaces(){
   db.collection('busan_places').onSnapshot(snap=>{
     placesData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
     renderMapMarkers();
+    renderPlacesList();
   });
+}
+function renderPlacesList(){
+  const wrap=document.getElementById('placesList');
+  if(!wrap) return;
+  if(placesData.length===0){ wrap.innerHTML='<div class="empty">아직 채팅에서 공유한 장소가 없어요.</div>'; return; }
+  wrap.innerHTML = placesData.map(p=>`
+    <div class="stay-card">
+      <div class="name">📍 ${p.name}</div>
+      <div class="addr">${p.address||''}</div>
+      <div class="dates" style="color:var(--muted)">${p.addedBy?p.addedBy+'님이 공유':''}</div>
+      <div class="row-actions">
+        <a target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(p.name)},${p.lat},${p.lng}">지도에서 보기</a>
+        <button class="del" onclick="deletePlace('${p.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+function deletePlace(id){
+  if(!confirm('이 장소를 목록/지도에서 삭제할까요? (채팅 기록은 남아요)')) return;
+  db.collection('busan_places').doc(id).delete();
 }
 
 /* ---------- 지도 ---------- */
