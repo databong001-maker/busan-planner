@@ -4,6 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <title>부산플래너 · 해운대 1박2일</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="theme-color" content="#0B2A3B" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="부산플래너" />
 <style>
   :root{
     --navy:#0B2A3B; --navy2:#123B52; --teal:#14707A; --sand:#F5EEDC;
@@ -936,6 +943,12 @@ function renderStats(){
   document.getElementById('statSchedule').textContent = `${doneS}/${scheduleData.length}`;
   document.getElementById('statStay').textContent = staysData.length;
   document.getElementById('statPlace').textContent = placesData.length;
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
 }
 </script>
 </body>
