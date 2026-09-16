@@ -615,6 +615,7 @@ function renderStays(){
       <div class="name">${s.name}</div>
       <div class="addr">${s.address||''}</div>
       <div class="dates">${s.checkin||'?'} ~ ${s.checkout||'?'}</div>
+      <div class="dates" style="color:var(--muted); font-weight:400;">${s.addedBy?s.addedBy+'님이 등록':''}</div>
       <div class="row-actions">
         <a target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(s.name)},${s.lat},${s.lng}">지도에서 보기</a>
         <button class="del" onclick="deleteStay('${s.id}')">삭제</button>
@@ -806,7 +807,7 @@ function renderMapMarkers(){
     if(!s.lat||!s.lng) return;
     const pos=new kakao.maps.LatLng(s.lat, s.lng);
     const marker=new kakao.maps.Marker({ position:pos, map:kakaoMap });
-    const iw=new kakao.maps.InfoWindow({ content:`<div style="padding:6px 8px;font-size:12px;">🏨 ${s.name}</div>` });
+    const iw=new kakao.maps.InfoWindow({ content:`<div style="padding:6px 8px;font-size:12px;">🏨 ${s.name}${s.addedBy?` <span style="color:#888">(${s.addedBy})</span>`:''}</div>` });
     kakao.maps.event.addListener(marker,'click',()=>iw.open(kakaoMap,marker));
     mapMarkers.push(marker);
   });
