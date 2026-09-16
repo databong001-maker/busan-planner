@@ -139,6 +139,10 @@
 
   /* ---------- 채팅 ---------- */
   .chat-wrap{display:flex; flex-direction:column; height:calc(100vh - 330px); min-height:360px;}
+  .presence-row{display:flex; gap:8px; flex-wrap:wrap; padding-bottom:10px; margin-bottom:8px; border-bottom:1px solid var(--line);}
+  .presence-chip{display:flex; align-items:center; gap:5px; background:var(--foam); border:1px solid var(--line); border-radius:999px; padding:4px 10px 4px 8px; font-size:11.5px; color:var(--muted);}
+  .presence-dot{width:8px; height:8px; border-radius:50%; background:#C7C7C7;}
+  .presence-dot.online{background:var(--done);}
   .chat-scroll{flex:1; overflow-y:auto; padding:4px 0 10px;}
   .chat-msg{display:flex; flex-direction:column; margin-bottom:12px; max-width:82%;}
   .chat-msg.mine{align-items:flex-end; margin-left:auto;}
@@ -273,6 +277,7 @@
   <section class="view" id="view-chat">
     <h2 class="sec-title"><span class="bar"></span>같이 채팅하기</h2>
     <div class="chat-wrap">
+      <div class="presence-row" id="presenceRow"></div>
       <div class="chat-scroll" id="chatScroll"></div>
       <div class="chat-input-row">
         <button class="place-btn" onclick="openPlacePicker()">📍</button>
@@ -462,6 +467,7 @@ auth.onAuthStateChanged(async(user)=>{
 let booted=false;
 function boot(){
   if(booted) return; booted=true;
+  db.collection('busan_members').doc(currentUser.uid).update({lastActive: firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
   listenMembers();
   listenSchedule();
   listenStays();
@@ -485,13 +491,34 @@ function setPlaceSub(sub){
   document.getElementById('placeSubPlaceBtn').classList.toggle('active', sub==='place');
 }
 
-/* ---------- 멤버 ---------- */
+/* ---------- 멤버 & 접속현황 ---------- */
+let membersData=[];
 function listenMembers(){
   db.collection('busan_members').onSnapshot(snap=>{
-    const wrap=document.getElementById('memberRow');
-    wrap.innerHTML = snap.docs.map(d=>`<span class="member-chip">${d.data().nickname||'멤버'}</span>`).join('');
+    membersData = snap.docs.map(d=>Object.assign({uid:d.id}, d.data()));
+    renderMemberRow();
+    renderPresence();
   });
 }
+function renderMemberRow(){
+  const wrap=document.getElementById('memberRow');
+  wrap.innerHTML = membersData.map(m=>`<span class="member-chip">${m.nickname||'멤버'}</span>`).join('');
+}
+function isOnline(m){
+  if(!m.lastActive || !m.lastActive.toMillis) return false;
+  return (Date.now() - m.lastActive.toMillis()) < 90000;
+}
+function renderPresence(){
+  const wrap=document.getElementById('presenceRow');
+  if(!wrap) return;
+  wrap.innerHTML = membersData.map(m=>`
+    <span class="presence-chip"><span class="presence-dot ${isOnline(m)?'online':''}"></span>${m.nickname||'멤버'}</span>
+  `).join('');
+}
+setInterval(renderPresence, 20000);
+setInterval(()=>{
+  if(currentUser) db.collection('busan_members').doc(currentUser.uid).update({lastActive: firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+}, 30000);
 
 /* ---------- 일정 ---------- */
 const DEFAULT_SCHEDULE=[
