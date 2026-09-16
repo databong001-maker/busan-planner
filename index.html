@@ -138,6 +138,28 @@
   .selected-loc{font-size:12.5px; color:var(--done); margin-top:8px;}
   .save-btn{width:100%; margin-top:12px; background:var(--coral); color:#fff; border:none; border-radius:10px; padding:12px; font-weight:800; font-size:14px;}
 
+  /* ---------- CHAT(채팅) ---------- */
+  .chat-wrap{display:flex; flex-direction:column; height:calc(100vh - 330px); min-height:360px;}
+  .chat-scroll{flex:1; overflow-y:auto; padding:4px 0 10px;}
+  .chat-msg{display:flex; flex-direction:column; margin-bottom:12px; max-width:82%;}
+  .chat-msg.mine{align-items:flex-end; margin-left:auto;}
+  .chat-msg .who{font-size:11px; color:var(--muted); margin-bottom:3px;}
+  .chat-bubble{background:var(--foam); border:1px solid var(--line); border-radius:14px 14px 14px 4px; padding:9px 12px; font-size:13.5px; line-height:1.5;}
+  .chat-msg.mine .chat-bubble{background:var(--navy); color:#fff; border-color:var(--navy); border-radius:14px 14px 4px 14px;}
+  .chat-bubble.place{background:#FFF3EE; border-color:#FFD8C9;}
+  .chat-msg.mine .chat-bubble.place{background:var(--coral); border-color:var(--coral); color:#fff;}
+  .place-card .pname{font-weight:800; font-size:13.5px;}
+  .place-card .paddr{font-size:11.5px; opacity:.85; margin-top:2px;}
+  .place-card .pgo{display:inline-block; margin-top:6px; font-size:11px; text-decoration:underline;}
+  .chat-input-row{display:flex; gap:6px; padding-top:8px; border-top:1px solid var(--line);}
+  .chat-input-row input{flex:1; border:1px solid var(--line); border-radius:999px; padding:10px 14px; font-size:13.5px;}
+  .chat-input-row button{flex-shrink:0; border:none; border-radius:999px; width:42px; height:42px; font-size:16px;}
+  .chat-input-row .send-btn{background:var(--navy); color:#fff;}
+  .chat-input-row .place-btn{background:var(--sand); border:1px solid var(--line);}
+  .place-picker{position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--foam); border-top:1px solid var(--line); border-radius:18px 18px 0 0; padding:16px; max-height:60vh; overflow-y:auto; box-shadow:0 -6px 20px rgba(11,42,59,.15);}
+  .place-picker h4{margin:0 0 10px; font-size:14.5px;}
+  .place-picker .close-picker{float:right; background:none; border:none; font-size:13px; color:var(--muted);}
+
   /* ---------- MAP(지도) ---------- */
   #kakaoMap{width:100%; height:360px; border-radius:16px; border:1px solid var(--line); background:var(--sand);}
   .map-toolbar{display:flex; gap:8px; margin-bottom:10px;}
@@ -210,7 +232,7 @@
 <div class="hero">
   <div class="hero-top">
     <div>
-      <div class="eyebrow">부산플래너 · p-v2</div>
+      <div class="eyebrow">부산플래너 · p-v3</div>
       <h1>해운대에서, <em>1박2일</em></h1>
       <p class="sub">절친 부부와 함께, 해파랑길+맛집 위주 여행</p>
     </div>
@@ -236,13 +258,14 @@
     <div class="quicklinks">
       <button class="qlink" onclick="go('schedule')"><span class="ic">🗓️</span><b>일정</b><span>Day1 · Day2</span></button>
       <button class="qlink alt" onclick="go('stay')"><span class="ic">🏨</span><b>숙소</b><span>함께 등록</span></button>
-      <button class="qlink" onclick="go('map')"><span class="ic">🗺️</span><b>지도</b><span>실제 카카오맵</span></button>
+      <button class="qlink" onclick="go('chat')"><span class="ic">💬</span><b>채팅</b><span>장소 공유</span></button>
+      <button class="qlink alt" onclick="go('map')"><span class="ic">🗺️</span><b>지도</b><span>실제 카카오맵</span></button>
       <button class="qlink alt" onclick="go('course')"><span class="ic">🥾</span><b>해파랑길</b><span>구간 정보</span></button>
       <button class="qlink" onclick="go('food')"><span class="ic">🍽️</span><b>맛집</b><span>큐레이션</span></button>
       <button class="qlink alt" onclick="go('memo')"><span class="ic">📝</span><b>메모</b><span>기록</span></button>
     </div>
     <h2 class="sec-title"><span class="bar"></span>다음 업데이트 예정</h2>
-    <div class="home-card"><p>채팅+장소공유 → 실시간 위치공유 → 카카오T/지하철/간편다이어리 연동 순서로 이어갈 예정이에요.</p></div>
+    <div class="home-card"><p>실시간 위치공유 → 카카오T/지하철/간편다이어리 연동 순서로 이어갈 예정이에요.</p></div>
   </section>
 
   <!-- 일정 -->
@@ -276,6 +299,28 @@
     </div>
   </section>
 
+  <!-- 채팅 -->
+  <section class="view" id="view-chat">
+    <h2 class="sec-title"><span class="bar"></span>같이 채팅하기</h2>
+    <div class="chat-wrap">
+      <div class="chat-scroll" id="chatScroll"></div>
+      <div class="chat-input-row">
+        <button class="place-btn" onclick="openPlacePicker()">📍</button>
+        <input id="chatInput" type="text" placeholder="메시지 입력" onkeydown="if(event.key==='Enter')sendChat()" />
+        <button class="send-btn" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 장소 공유 검색 팝업 -->
+  <div class="place-picker hidden" id="placePicker">
+    <button class="close-picker" onclick="closePlacePicker()">닫기 ✕</button>
+    <h4>📍 공유할 장소 검색</h4>
+    <input id="placePickerInput" type="text" placeholder="예: 해운대암소갈비집" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:8px;" />
+    <button class="search-btn" onclick="searchPlacePicker()">카카오맵에서 검색</button>
+    <div class="search-results" id="placePickerResults"></div>
+  </div>
+
   <!-- 지도 -->
   <section class="view" id="view-map">
     <h2 class="sec-title"><span class="bar"></span>지도</h2>
@@ -286,8 +331,9 @@
     <div id="kakaoMap"></div>
     <div class="legend">
       <span><i style="background:var(--coral)"></i>숙소</span>
+      <span><i style="background:var(--teal)"></i>채팅에서 공유한 장소</span>
     </div>
-    <p style="font-size:12px; color:var(--muted); margin-top:10px;">다음 업데이트에서 맛집·장소 핀, 지하철·버스정류장, 실시간 위치공유가 추가돼요.</p>
+    <p style="font-size:12px; color:var(--muted); margin-top:10px;">다음 업데이트에서 지하철·버스정류장, 실시간 위치공유가 추가돼요.</p>
   </section>
 
   <!-- 해파랑길 -->
@@ -338,6 +384,7 @@
   <button class="active" data-tab="home" onclick="go('home')"><span class="ic">🏠</span>홈</button>
   <button data-tab="schedule" onclick="go('schedule')"><span class="ic">🗓️</span>일정</button>
   <button data-tab="stay" onclick="go('stay')"><span class="ic">🏨</span>숙소</button>
+  <button data-tab="chat" onclick="go('chat')"><span class="ic">💬</span>채팅</button>
   <button data-tab="map" onclick="go('map')"><span class="ic">🗺️</span>지도</button>
   <button data-tab="course" onclick="go('course')"><span class="ic">🥾</span>해파랑길</button>
   <button data-tab="food" onclick="go('food')"><span class="ic">🍽️</span>맛집</button>
@@ -434,6 +481,8 @@ function boot(){
   listenMembers();
   listenSchedule();
   listenStays();
+  listenChat();
+  listenPlaces();
 }
 
 /* ---------- 탭 전환 ---------- */
@@ -600,6 +649,90 @@ function saveStay(){
   });
 }
 
+/* ---------- 채팅 ---------- */
+let chatData=[];
+function listenChat(){
+  db.collection('busan_chat').orderBy('createdAt','asc').limit(200).onSnapshot(snap=>{
+    chatData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+    renderChat();
+  });
+}
+function renderChat(){
+  const wrap=document.getElementById('chatScroll');
+  wrap.innerHTML = chatData.map(m=>{
+    const mine = currentUser && m.uid===currentUser.uid;
+    if(m.type==='place'){
+      return `<div class="chat-msg ${mine?'mine':''}">
+        <div class="who">${m.nickname}</div>
+        <div class="chat-bubble place place-card">
+          <div class="pname">📍 ${m.place.name}</div>
+          <div class="paddr">${m.place.address||''}</div>
+          <a class="pgo" target="_blank" href="https://map.kakao.com/link/map/${encodeURIComponent(m.place.name)},${m.place.lat},${m.place.lng}">지도에서 보기</a>
+        </div>
+      </div>`;
+    }
+    return `<div class="chat-msg ${mine?'mine':''}">
+      <div class="who">${m.nickname}</div>
+      <div class="chat-bubble">${(m.text||'').replace(/</g,'&lt;')}</div>
+    </div>`;
+  }).join('');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function sendChat(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text) return;
+  db.collection('busan_chat').add({
+    type:'text', text, uid:currentUser.uid, nickname:myNickname,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  input.value='';
+}
+let placePickerService=null;
+function openPlacePicker(){
+  document.getElementById('placePicker').classList.remove('hidden');
+}
+function closePlacePicker(){
+  document.getElementById('placePicker').classList.add('hidden');
+  document.getElementById('placePickerResults').innerHTML='';
+  document.getElementById('placePickerInput').value='';
+}
+function searchPlacePicker(){
+  const kw=document.getElementById('placePickerInput').value.trim();
+  if(!kw) return;
+  if(!kakaoPlacesService){ ensureKakaoServices(); setTimeout(searchPlacePicker,400); return; }
+  kakaoPlacesService.keywordSearch(kw+' 부산', (data,status)=>{
+    const wrap=document.getElementById('placePickerResults');
+    if(status!==kakao.maps.services.Status.OK || !data.length){
+      wrap.innerHTML='<p style="font-size:12.5px;color:var(--muted)">검색 결과가 없어요.</p>';
+      return;
+    }
+    wrap.innerHTML = data.slice(0,6).map(p=>`
+      <div class="search-item">
+        <div class="info"><b>${p.place_name}</b>${p.road_address_name||p.address_name}</div>
+        <button onclick='shareChatPlace(${JSON.stringify(p.place_name)}, ${p.y}, ${p.x}, ${JSON.stringify(p.road_address_name||p.address_name)})'>공유</button>
+      </div>
+    `).join('');
+  });
+}
+function shareChatPlace(name, lat, lng, address){
+  const place={name, address, lat:Number(lat), lng:Number(lng)};
+  db.collection('busan_chat').add({
+    type:'place', place, uid:currentUser.uid, nickname:myNickname,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  db.collection('busan_places').add(Object.assign({}, place, {addedBy:myNickname, addedAt:firebase.firestore.FieldValue.serverTimestamp()}));
+  closePlacePicker();
+  go('chat');
+}
+let placesData=[];
+function listenPlaces(){
+  db.collection('busan_places').onSnapshot(snap=>{
+    placesData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+    renderMapMarkers();
+  });
+}
+
 /* ---------- 지도 ---------- */
 let kakaoMap=null, mapMarkers=[];
 function initMapIfNeeded(){
@@ -619,6 +752,18 @@ function renderMapMarkers(){
     const pos=new kakao.maps.LatLng(s.lat, s.lng);
     const marker=new kakao.maps.Marker({ position:pos, map:kakaoMap });
     const iw=new kakao.maps.InfoWindow({ content:`<div style="padding:6px 8px;font-size:12px;">🏨 ${s.name}</div>` });
+    kakao.maps.event.addListener(marker,'click',()=>iw.open(kakaoMap,marker));
+    mapMarkers.push(marker);
+  });
+  const placeImg = new kakao.maps.MarkerImage(
+    'data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="30" height="38" viewBox="0 0 30 38"><path d="M15 0C6.7 0 0 6.7 0 15c0 11 15 23 15 23s15-12 15-23C30 6.7 23.3 0 15 0z" fill="#14707A"/><circle cx="15" cy="15" r="6" fill="#fff"/></svg>'),
+    new kakao.maps.Size(30,38), { offset:new kakao.maps.Point(15,38) }
+  );
+  placesData.forEach(p=>{
+    if(!p.lat||!p.lng) return;
+    const pos=new kakao.maps.LatLng(p.lat, p.lng);
+    const marker=new kakao.maps.Marker({ position:pos, map:kakaoMap, image:placeImg });
+    const iw=new kakao.maps.InfoWindow({ content:`<div style="padding:6px 8px;font-size:12px;">📍 ${p.name}${p.addedBy?` <span style="color:#888">(${p.addedBy})</span>`:''}</div>` });
     kakao.maps.event.addListener(marker,'click',()=>iw.open(kakaoMap,marker));
     mapMarkers.push(marker);
   });
