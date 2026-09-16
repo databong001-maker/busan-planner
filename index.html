@@ -236,7 +236,7 @@
     <button id="logoutBtn">로그아웃</button>
   </div>
   <div class="stats">
-    <div class="stat"><b id="statSchedule">0/0</b><span>일정 체크</span></div>
+    <div class="stat"><b id="statOnline">0</b><span>로그인 중</span></div>
     <div class="stat"><b id="statStay">0</b><span>등록된 숙소</span></div>
     <div class="stat"><b id="statPlace">0</b><span>공유된 장소</span></div>
   </div>
@@ -503,7 +503,9 @@ function listenMembers(){
 }
 function renderMemberRow(){
   const wrap=document.getElementById('memberRow');
-  wrap.innerHTML = membersData.map(m=>`<span class="member-chip">${m.nickname||'멤버'}</span>`).join('');
+  wrap.innerHTML = membersData.map(m=>`<span class="member-chip"><span class="presence-dot ${isOnline(m)?'online':''}" style="margin-right:5px;"></span>${m.nickname||'멤버'}</span>`).join('');
+  const statEl=document.getElementById('statOnline');
+  if(statEl) statEl.textContent = membersData.filter(isOnline).length;
 }
 function isOnline(m){
   if(!m.lastActive || !m.lastActive.toMillis) return false;
@@ -516,7 +518,7 @@ function renderPresence(){
     <span class="presence-chip"><span class="presence-dot ${isOnline(m)?'online':''}"></span>${m.nickname||'멤버'}</span>
   `).join('');
 }
-setInterval(renderPresence, 20000);
+setInterval(()=>{ renderPresence(); renderMemberRow(); }, 20000);
 setInterval(()=>{
   if(currentUser) db.collection('busan_members').doc(currentUser.uid).update({lastActive: firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
 }, 30000);
@@ -976,8 +978,6 @@ memoBox.addEventListener('input', ()=> localStorage.setItem(MEMO_KEY, memoBox.va
 
 /* ---------- 통계 ---------- */
 function renderStats(){
-  const doneS = scheduleData.filter(s=>s.done).length;
-  document.getElementById('statSchedule').textContent = `${doneS}/${scheduleData.length}`;
   document.getElementById('statStay').textContent = staysData.length;
   document.getElementById('statPlace').textContent = placesData.length;
 }
