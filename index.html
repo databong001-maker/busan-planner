@@ -547,6 +547,7 @@ function renderSchedule(){
         <button class="chip-btn ${it.done?'done':''}" onclick="toggleSchedule('${it.id}')">${it.done?'✓ 완료':'완료 체크'}</button>
         <button class="chip-btn" onclick="editScheduleItem('${it.id}')">✏️ 수정</button>
         <button class="chip-btn" onclick="deleteScheduleItem('${it.id}')">🗑 삭제</button>
+        <button class="chip-btn" onclick='goAddPlaceFromSchedule(${JSON.stringify(it.title)})'>📍 장소 추가</button>
       </div>
     </div>
   `).join('') + `
@@ -579,6 +580,13 @@ function promptAddSchedule(day){
   const desc=prompt('설명 (없으면 비워두세요)', '');
   if(desc===null) return;
   db.collection('busan_schedule').add({ day, time:time.trim(), title:title.trim(), desc:desc.trim(), done:false, addedBy:myNickname });
+}
+function goAddPlaceFromSchedule(title){
+  go('place');
+  setPlaceSub('place');
+  const input=document.getElementById('placeSearchInput');
+  input.value = title;
+  input.focus();
 }
 
 /* ---------- 숙소 ---------- */
