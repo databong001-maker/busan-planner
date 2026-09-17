@@ -67,6 +67,8 @@
 
   /* ---------- TABS ---------- */
   nav.tabs{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--foam); border-top:1px solid var(--line); display:flex; overflow-x:auto; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -2px 10px rgba(11,42,59,.06);}
+  .tabs-fade-wrap{position:fixed; left:0; right:0; bottom:0; height:60px; z-index:21; pointer-events:none;}
+  .tabs-fade-wrap::after{content:""; position:absolute; right:0; bottom:0; width:26px; height:100%; background:linear-gradient(to right, transparent, var(--foam) 75%);}
   nav.tabs button{flex:1 0 auto; min-width:54px; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 4px; color:var(--muted); font-size:10.5px; border-radius:10px;}
   nav.tabs button .ic{font-size:18px;}
   nav.tabs button.active{color:var(--coral-deep); font-weight:700;}
@@ -111,8 +113,12 @@
   .tl-item.done .tl-title{color:var(--muted); text-decoration:line-through;}
   .tl-desc{font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:6px;}
   .tl-meta{font-size:11px; color:#9AA9AE; margin-bottom:6px;}
-  .tl-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .tl-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
   .chip-btn{font-size:12px; padding:5px 10px; border-radius:999px; border:1px solid var(--line); background:var(--foam); color:var(--muted);}
+  .tl-icon-row{display:flex; gap:6px; margin-left:auto;}
+  .tl-icon-btn{width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:var(--foam); font-size:12.5px; padding:0; display:flex; align-items:center; justify-content:center;}
+  .tl-icon-btn.done{background:var(--done); color:#fff; border-color:var(--done);}
+  .day-progress{font-size:12px; color:var(--muted); margin:-6px 0 14px;}
   .chip-btn.done{background:var(--done); color:#fff; border-color:var(--done);}
 
   /* ---------- 장소(숙소+맛집/장소) ---------- */
@@ -293,6 +299,7 @@
       <button class="save-btn" style="margin-top:0;" onclick="saveTripDates()">저장</button>
     </div>
     <div class="day-toggle" id="dayToggle"></div>
+    <div class="day-progress" id="dayProgress"></div>
     <div class="timeline" id="timelineWrap"></div>
   </section>
 
@@ -423,6 +430,7 @@
   <button data-tab="transit" onclick="go('transit')"><span class="ic">🚌</span>교통</button>
   <button data-tab="memo" onclick="go('memo')"><span class="ic">📝</span>메모</button>
 </nav>
+<div class="tabs-fade-wrap"></div>
 
 </div><!-- /#appRoot -->
 
@@ -738,6 +746,11 @@ function toggleSchedule(id){
 function renderSchedule(){
   const wrap=document.getElementById('timelineWrap');
   const items=scheduleData.filter(s=>s.day===currentDay);
+  const progEl=document.getElementById('dayProgress');
+  if(progEl){
+    const doneCount=items.filter(i=>i.done).length;
+    progEl.textContent = items.length ? `Day${currentDay} · ${doneCount}/${items.length} 완료` : '';
+  }
   wrap.innerHTML = items.map(it=>`
     <div class="tl-item ${it.done?'done':''}">
       <div class="tl-dot"></div>
@@ -747,9 +760,11 @@ function renderSchedule(){
       ${it.done && it.doneBy? `<div class="tl-meta">${it.doneBy}님이 체크함</div>`:''}
       <div class="tl-actions">
         <button class="chip-btn ${it.done?'done':''}" onclick="toggleSchedule('${it.id}')">${it.done?'✓ 완료':'완료 체크'}</button>
-        <button class="chip-btn" onclick="editScheduleItem('${it.id}')">✏️ 수정</button>
-        <button class="chip-btn" onclick="deleteScheduleItem('${it.id}')">🗑 삭제</button>
-        <button class="chip-btn ${hasLinkedPlace(it.id)?'done':''}" onclick='goAddPlaceFromSchedule(${JSON.stringify(it.id)}, ${JSON.stringify(it.title)})'>${hasLinkedPlace(it.id)?'✓ 장소 연결됨':'📍 장소 추가'}</button>
+        <div class="tl-icon-row">
+          <button class="tl-icon-btn" onclick="editScheduleItem('${it.id}')" title="수정">✏️</button>
+          <button class="tl-icon-btn" onclick="deleteScheduleItem('${it.id}')" title="삭제">🗑</button>
+          <button class="tl-icon-btn ${hasLinkedPlace(it.id)?'done':''}" onclick='goAddPlaceFromSchedule(${JSON.stringify(it.id)}, ${JSON.stringify(it.title)})' title="${hasLinkedPlace(it.id)?'장소 연결됨':'장소 추가'}">${hasLinkedPlace(it.id)?'✓':'📍'}</button>
+        </div>
       </div>
     </div>
   `).join('') + `
