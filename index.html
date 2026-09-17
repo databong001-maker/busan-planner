@@ -258,11 +258,6 @@
     </div>
     <button id="logoutBtn">로그아웃</button>
   </div>
-  <div class="stats">
-    <div class="stat"><b id="statOnline">0</b><span>로그인 중</span></div>
-    <div class="stat"><b id="statStay">0</b><span>등록된 숙소</span></div>
-    <div class="stat"><b id="statPlace">0</b><span>공유된 장소</span></div>
-  </div>
   <div class="member-row" id="memberRow"></div>
   <div class="wave"><svg viewBox="0 0 500 40" preserveAspectRatio="none"><path d="M0,20 C120,45 180,0 260,18 C340,36 420,6 500,22 L500,40 L0,40 Z" fill="#F5EEDC"/></svg></div>
 </div>
@@ -1264,11 +1259,8 @@ const memoBox=document.getElementById('memoBox');
 memoBox.value = localStorage.getItem(MEMO_KEY) || '';
 memoBox.addEventListener('input', ()=> localStorage.setItem(MEMO_KEY, memoBox.value));
 
-/* ---------- 통계 ---------- */
-function renderStats(){
-  document.getElementById('statStay').textContent = staysData.length;
-  document.getElementById('statPlace').textContent = placesData.length;
-}
+/* ---------- 통계 (히어로 표시는 제거됨, 다른 곳에서 필요해질 경우 대비해 함수만 유지) ---------- */
+function renderStats(){}
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
