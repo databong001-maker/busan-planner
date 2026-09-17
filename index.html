@@ -541,9 +541,12 @@ function listenMembers(){
 }
 function renderMemberRow(){
   const wrap=document.getElementById('memberRow');
-  wrap.innerHTML = membersData.map(m=>`<span class="member-chip"><span class="presence-dot ${isOnline(m)?'online':''}" style="margin-right:5px;"></span>${m.nickname||'멤버'}</span>`).join('');
+  const online=membersData.filter(isOnline);
+  wrap.innerHTML = online.length
+    ? online.map(m=>`<span class="member-chip"><span class="presence-dot online" style="margin-right:5px;"></span>${m.nickname||'멤버'}</span>`).join('')
+    : `<span class="member-chip" style="opacity:.7;">지금 접속 중인 멤버가 없어요</span>`;
   const statEl=document.getElementById('statOnline');
-  if(statEl) statEl.textContent = membersData.filter(isOnline).length;
+  if(statEl) statEl.textContent = online.length;
 }
 function isOnline(m){
   if(!m.lastActive || !m.lastActive.toMillis) return false;
@@ -552,9 +555,10 @@ function isOnline(m){
 function renderPresence(){
   const wrap=document.getElementById('presenceRow');
   if(!wrap) return;
-  wrap.innerHTML = membersData.map(m=>`
-    <span class="presence-chip"><span class="presence-dot ${isOnline(m)?'online':''}"></span>${m.nickname||'멤버'}</span>
-  `).join('');
+  const online=membersData.filter(isOnline);
+  wrap.innerHTML = online.length
+    ? online.map(m=>`<span class="presence-chip"><span class="presence-dot online"></span>${m.nickname||'멤버'}</span>`).join('')
+    : `<span class="presence-chip" style="opacity:.7;">지금 접속 중인 멤버가 없어요</span>`;
 }
 setInterval(()=>{ renderPresence(); renderMemberRow(); }, 20000);
 setInterval(()=>{
