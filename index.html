@@ -271,10 +271,6 @@
 
   <!-- 홈 -->
   <section class="view active" id="view-home">
-    <h2 class="sec-title"><span class="bar"></span>이번 여행 한눈에</h2>
-    <div class="home-card">
-      <p>동탄 출발 1박2일. 1일차는 오륙도~광안리 워킹 후 언양불고기로 저녁, 센텀호텔 숙박. 2일차는 해운대~송정 워킹 후 블루라인 해변열차로 돌아와 부산역에서 동탄으로 복귀. 로그인한 멤버끼리 숙소·일정·장소를 함께 채워가요.</p>
-    </div>
     <div class="quicklinks">
       <button class="qlink" onclick="go('schedule')"><span class="ic">🗓️</span><b>일정</b><span>Day1 · Day2</span></button>
       <button class="qlink alt" onclick="go('chat')"><span class="ic">💬</span><b>채팅</b><span>장소 공유</span></button>
@@ -299,7 +295,6 @@
       <button class="save-btn" style="margin-top:0;" onclick="saveTripDates()">저장</button>
     </div>
     <div class="day-toggle" id="dayToggle"></div>
-    <div class="day-progress" id="dayProgress"></div>
     <div class="timeline" id="timelineWrap"></div>
   </section>
 
@@ -746,11 +741,6 @@ function toggleSchedule(id){
 function renderSchedule(){
   const wrap=document.getElementById('timelineWrap');
   const items=scheduleData.filter(s=>s.day===currentDay);
-  const progEl=document.getElementById('dayProgress');
-  if(progEl){
-    const doneCount=items.filter(i=>i.done).length;
-    progEl.textContent = items.length ? `Day${currentDay} · ${doneCount}/${items.length} 완료` : '';
-  }
   wrap.innerHTML = items.map(it=>`
     <div class="tl-item ${it.done?'done':''}">
       <div class="tl-dot"></div>
