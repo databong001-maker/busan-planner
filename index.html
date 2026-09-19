@@ -408,6 +408,23 @@
     <div class="save-hint">이 기기에 자동 저장됩니다.</div>
   </section>
 
+  <!-- 설정 -->
+  <section class="view" id="view-settings">
+    <h2 class="sec-title"><span class="bar"></span>백업</h2>
+    <div class="home-card">
+      <p style="margin-bottom:10px;">지금 일정·장소·숙소를 백업해두면, 다음 부산여행 때 다시 불러와서 이전 맛집·장소를 참고할 수 있어요. (채팅 내용은 백업에 포함되지 않아요)</p>
+      <input type="text" id="backupLabelInput" placeholder="예: 해운대 1박2일" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13.5px;margin-bottom:8px;" />
+      <button class="save-btn" style="margin-top:0;" onclick="createBackup()">지금 데이터 백업하기</button>
+    </div>
+    <div id="backupList"></div>
+
+    <h2 class="sec-title"><span class="bar"></span>새 일정 시작</h2>
+    <div class="home-card">
+      <p id="resetHint" style="margin-bottom:10px;">현재 일정·장소·숙소를 모두 지우고 새 여행을 시작해요. 위에서 백업을 한 번 이상 진행해야 초기화 버튼이 활성화돼요.</p>
+      <button class="save-btn" id="resetTripBtn" style="margin-top:0; background:var(--red);" onclick="confirmResetTrip()" disabled>새 일정 시작하기</button>
+    </div>
+  </section>
+
 </main>
 
 <nav class="tabs">
@@ -419,6 +436,7 @@
   <button data-tab="info" onclick="go('info')"><span class="ic">📖</span>여행정보</button>
   <button data-tab="transit" onclick="go('transit')"><span class="ic">🚌</span>교통</button>
   <button data-tab="memo" onclick="go('memo')"><span class="ic">📝</span>메모</button>
+  <button data-tab="settings" onclick="go('settings')"><span class="ic">⚙️</span>설정</button>
 </nav>
 <div class="tabs-fade-wrap"></div>
 
@@ -567,6 +585,7 @@ function boot(){
   listenChat();
   listenPlaces();
   listenTripMeta();
+  listenBackups();
   renderWeather();
 }
 
@@ -1013,6 +1032,139 @@ function addPlaceManual(name, lat, lng, address){
     document.getElementById('placeSearchResults').innerHTML='';
     pendingScheduleLink=null;
   });
+}
+
+/* ---------- 설정: 백업 / 새 일정 시작 ---------- */
+let backupsData=[];
+function listenBackups(){
+  db.collection('busan_backups').orderBy('createdAt','desc').onSnapshot(snap=>{
+    backupsData = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+    renderBackupsList();
+    renderResetSection();
+  });
+}
+function defaultBackupLabel(){
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return `백업 ${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+}
+async function createBackup(){
+  const labelInput=document.getElementById('backupLabelInput');
+  const label=labelInput.value.trim() || defaultBackupLabel();
+  if(!confirm(`"${label}" 이름으로 지금 일정·장소·숙소를 백업할까요?`)) return;
+  const btn=event && event.target;
+  if(btn) btn.disabled=true;
+  try{
+    await db.collection('busan_backups').add({
+      label,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: myNickname,
+      tripMeta: Object.assign({}, tripMeta),
+      schedule: scheduleData,
+      places: placesData,
+      stays: staysData
+    });
+    labelInput.value='';
+    alert('백업이 완료됐어요.');
+  }catch(e){
+    alert('백업에 실패했어요: '+e.message);
+  }finally{
+    if(btn) btn.disabled=false;
+  }
+}
+function renderBackupsList(){
+  const wrap=document.getElementById('backupList');
+  if(!wrap) return;
+  if(backupsData.length===0){ wrap.innerHTML='<div class="empty">아직 백업이 없어요.</div>'; return; }
+  wrap.innerHTML = backupsData.map(b=>{
+    const dt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate() : null;
+    const dateStr = dt ? `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}` : '';
+    const counts = `일정 ${(b.schedule||[]).length} · 장소 ${(b.places||[]).length} · 숙소 ${(b.stays||[]).length}`;
+    return `
+    <div class="stay-card">
+      <div class="name">🗂 ${b.label||'이름없음'}</div>
+      <div class="addr">${counts}</div>
+      <div class="dates">${dateStr}${b.createdBy?' · '+b.createdBy+'님':''}</div>
+      <div class="row-actions">
+        <button onclick="restoreBackup('${b.id}')">불러오기</button>
+        <button class="del" onclick="deleteBackupEntry('${b.id}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function clearCollection(name){
+  const snap = await db.collection(name).get();
+  const docs = snap.docs;
+  for(let i=0;i<docs.length;i+=400){
+    const batch=db.batch();
+    docs.slice(i,i+400).forEach(d=>batch.delete(d.ref));
+    await batch.commit();
+  }
+}
+async function restoreBackup(id){
+  const b=backupsData.find(x=>x.id===id);
+  if(!b) return;
+  if(!confirm(`"${b.label}" 백업을 불러올까요?\n현재 일정·장소·숙소가 이 백업 내용으로 덮어써져요.`)) return;
+  try{
+    await clearCollection('busan_schedule');
+    await clearCollection('busan_places');
+    await clearCollection('busan_stays');
+    const writeBack=async(colName, items)=>{
+      const list=items||[];
+      for(let i=0;i<list.length;i+=400){
+        const batch=db.batch();
+        list.slice(i,i+400).forEach(it=>{
+          const data=Object.assign({}, it); delete data.id;
+          if(it.id) batch.set(db.collection(colName).doc(it.id), data);
+          else batch.set(db.collection(colName).doc(), data);
+        });
+        await batch.commit();
+      }
+    };
+    await writeBack('busan_schedule', b.schedule);
+    await writeBack('busan_places', b.places);
+    await writeBack('busan_stays', b.stays);
+    if(b.tripMeta) await db.collection('busan_meta').doc('trip').set(b.tripMeta);
+    alert('불러오기가 완료됐어요.');
+    go('schedule');
+  }catch(e){
+    alert('불러오기에 실패했어요: '+e.message);
+  }
+}
+function deleteBackupEntry(id){
+  if(!confirm('이 백업을 삭제할까요? 되돌릴 수 없어요.')) return;
+  db.collection('busan_backups').doc(id).delete();
+}
+function renderResetSection(){
+  const btn=document.getElementById('resetTripBtn');
+  const hint=document.getElementById('resetHint');
+  if(!btn) return;
+  if(backupsData.length>0){
+    btn.disabled=false;
+    hint.textContent='현재 일정·장소·숙소를 모두 지우고 새 여행을 시작해요. (백업은 안전하게 따로 보관돼요)';
+  }else{
+    btn.disabled=true;
+    hint.textContent='현재 일정·장소·숙소를 모두 지우고 새 여행을 시작해요. 위에서 백업을 한 번 이상 진행해야 초기화 버튼이 활성화돼요.';
+  }
+}
+async function confirmResetTrip(){
+  if(backupsData.length===0){ alert('먼저 위에서 백업을 진행해주세요.'); return; }
+  if(!confirm('정말 새 일정을 시작할까요?\n현재 일정·장소·숙소가 모두 삭제돼요. (백업은 안전하게 남아있어요)')) return;
+  const btn=document.getElementById('resetTripBtn');
+  btn.disabled=true; btn.textContent='처리 중...';
+  try{
+    await clearCollection('busan_schedule');
+    await clearCollection('busan_places');
+    await clearCollection('busan_stays');
+    await db.collection('busan_meta').doc('trip').set({startDate:null, dayCount:2, setBy:myNickname});
+    alert('새 일정을 시작할 준비가 됐어요! 일정 탭에서 새 여행 날짜를 설정해주세요.');
+    go('schedule');
+  }catch(e){
+    alert('초기화에 실패했어요: '+e.message);
+  }finally{
+    btn.textContent='새 일정 시작하기';
+    renderResetSection();
+  }
 }
 
 /* ---------- 지도 ---------- */
