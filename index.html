@@ -252,8 +252,8 @@
   <div class="hero-top">
     <div>
       <div class="eyebrow">부산플래너 · p-v3</div>
-      <h1>해운대에서, <em>1박2일</em></h1>
-      <p class="sub">절친 부부와 함께, 해파랑길+맛집 위주 여행</p>
+      <h1><span id="heroLocation">해운대</span>에서, <em id="heroDuration">1박2일</em></h1>
+      <p class="sub" id="heroDesc">절친 부부와 함께, 해파랑길+맛집 위주 여행</p>
       <div class="weather-pill" id="weatherPill"></div>
     </div>
     <button id="logoutBtn">로그아웃</button>
@@ -410,6 +410,15 @@
 
   <!-- 설정 -->
   <section class="view" id="view-settings">
+    <h2 class="sec-title"><span class="bar"></span>소개글 편집</h2>
+    <div class="home-card">
+      <p style="margin-bottom:10px;">홈 화면 상단에 보일 소개 문구예요. 장소·기간·간단한 내용 3가지로 나눠 수정할 수 있어요.</p>
+      <input type="text" id="introLocationInput" placeholder="여행 장소 (예: 해운대)" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13.5px;margin-bottom:8px;" />
+      <input type="text" id="introDurationInput" placeholder="기간 (예: 1박2일)" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13.5px;margin-bottom:8px;" />
+      <input type="text" id="introDescInput" placeholder="간단한 내용 (예: 절친 부부와 함께, 해파랑길+맛집 위주 여행)" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13.5px;margin-bottom:10px;" />
+      <button class="save-btn" style="margin-top:0;" onclick="saveIntro()">소개글 저장</button>
+    </div>
+
     <h2 class="sec-title"><span class="bar"></span>일정 백업</h2>
     <div class="home-card">
       <p style="margin-bottom:14px;">부산 여행 일정·장소·숙소를 백업해두면, 다음 부산여행 때 이전 맛집·장소를 다시 불러와서 참고할 수 있어요. (채팅 내용은 포함되지 않아요)</p>
@@ -625,6 +634,7 @@ function go(tab){
   document.querySelector('nav.tabs button[data-tab="'+tab+'"]').classList.add('active');
   window.scrollTo(0,0);
   if(tab==='map') initMapIfNeeded();
+  if(tab==='settings') fillIntroInputs();
   if(tab!=='place') pendingScheduleLink=null;
 }
 function setPlaceSub(sub){
@@ -689,15 +699,41 @@ const DEFAULT_SCHEDULE=[
 ];
 let scheduleData=[];
 let currentDay=1;
-let tripMeta={startDate:null, dayCount:2};
+const TRIP_META_DEFAULTS={startDate:null, dayCount:2, introLocation:'해운대', introDuration:'1박2일', introDesc:'절친 부부와 함께, 해파랑길+맛집 위주 여행'};
+let tripMeta=Object.assign({}, TRIP_META_DEFAULTS);
 function listenTripMeta(){
   db.collection('busan_meta').doc('trip').onSnapshot(doc=>{
-    tripMeta = doc.exists ? Object.assign({startDate:null, dayCount:2}, doc.data()) : {startDate:null, dayCount:2};
+    tripMeta = doc.exists ? Object.assign({}, TRIP_META_DEFAULTS, doc.data()) : Object.assign({}, TRIP_META_DEFAULTS);
     if(currentDay>tripMeta.dayCount) currentDay=1;
     renderTripDatesBar();
     renderDayToggle();
     renderSchedule();
+    renderHeroIntro();
   });
+}
+function renderHeroIntro(){
+  const loc=document.getElementById('heroLocation');
+  const dur=document.getElementById('heroDuration');
+  const desc=document.getElementById('heroDesc');
+  if(loc) loc.textContent = tripMeta.introLocation;
+  if(dur) dur.textContent = tripMeta.introDuration;
+  if(desc) desc.textContent = tripMeta.introDesc;
+}
+function fillIntroInputs(){
+  const locInput=document.getElementById('introLocationInput');
+  const durInput=document.getElementById('introDurationInput');
+  const descInput=document.getElementById('introDescInput');
+  if(locInput) locInput.value = tripMeta.introLocation;
+  if(durInput) durInput.value = tripMeta.introDuration;
+  if(descInput) descInput.value = tripMeta.introDesc;
+}
+function saveIntro(){
+  const introLocation = document.getElementById('introLocationInput').value.trim() || TRIP_META_DEFAULTS.introLocation;
+  const introDuration = document.getElementById('introDurationInput').value.trim() || TRIP_META_DEFAULTS.introDuration;
+  const introDesc = document.getElementById('introDescInput').value.trim() || TRIP_META_DEFAULTS.introDesc;
+  db.collection('busan_meta').doc('trip').set({introLocation, introDuration, introDesc}, {merge:true})
+    .then(()=>{ alert('소개글이 저장됐어요.'); })
+    .catch(e=>{ alert('저장에 실패했어요: '+e.message); });
 }
 function formatDayLabel(i){
   if(!tripMeta.startDate) return `Day ${i}`;
@@ -1240,7 +1276,7 @@ function confirmResetTrip(){
         await clearCollection('busan_schedule');
         await clearCollection('busan_places');
         await clearCollection('busan_stays');
-        await db.collection('busan_meta').doc('trip').set({startDate:null, dayCount:2, setBy:myNickname});
+        await db.collection('busan_meta').doc('trip').set({startDate:null, dayCount:2, setBy:myNickname}, {merge:true});
         alert('새 일정을 시작할 준비가 됐어요! 일정 탭에서 새 여행 날짜를 설정해주세요.');
         go('schedule');
       }catch(e){
